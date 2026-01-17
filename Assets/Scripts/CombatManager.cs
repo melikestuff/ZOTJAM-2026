@@ -25,9 +25,6 @@ public class CombatManager : MonoBehaviour
     public List<float> QuickTimePresses = new List<float>();
     public int dmg = 5;
     #endregion
-
-    #region Ex
-    #endregion
     
 
     #region Singleton Setup   
@@ -86,9 +83,11 @@ public class CombatManager : MonoBehaviour
         }
     }
 
+    /*
     // Public method to know when to start the QTE
     public void startQTE(List<float> qtEvents){
         Debug.Log("QTE STARTED");
     }
+    */
 
 }

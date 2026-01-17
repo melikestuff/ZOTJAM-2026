@@ -1,16 +1,123 @@
+using System.Collections.Generic;
+using System.Collections;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 
 public class QTEhandler : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    #region Allow For Easy Inspector editing
+
+    // References to the Good and Bad ranges
+    // And also store their widths for usage later
+    [SerializeField] private RectTransform mediumRange;
+    [SerializeField] private float mediumRangeWidth;
+
+    [SerializeField] private RectTransform goodRange;
+    [SerializeField] private float goodRangeWidth;
+
+    private void OnValidate()
     {
-        
+        //I lowkey have no idea what this does i searched it up on the internet lol
+        //But pretty much unity complains when we change the Rect.transform 
+        // While were stil in editor, as it fires a signal to something else
+        // And gives us a warning, (it still works but it was scary so i spent like
+        // an hour looking it up).
+        // TLDR THANK YOU INTERNET
+    #if UNITY_EDITOR
+        EditorApplication.delayCall += ApplySizes;
+    #endif
     }
 
-    // Update is called once per frame
-    void Update()
+    private void ApplySizes()
     {
-        
+        if (!this) return; // object deleted or domain reload
+
+        if (mediumRange)
+            mediumRange.sizeDelta = new Vector2(mediumRangeWidth, mediumRange.sizeDelta.y);
+
+        if (goodRange)
+            goodRange.sizeDelta = new Vector2(goodRangeWidth, goodRange.sizeDelta.y);
     }
+    #endregion
+    
+    #region Event Listener
+    [SerializeField] 
+    private CombatUIState visibleDuringState = CombatUIState.QTE;
+    [SerializeField]
+    private GameObject QTE_UI;
+    private void OnEnable()
+    {
+        CombatManager.OnUIStateChanged += HandleUIStateChanged;
+    }
+
+    private void OnDisable()
+    {
+        CombatManager.OnUIStateChanged -= HandleUIStateChanged;
+    }
+
+    private void HandleUIStateChanged(CombatUIState newState)
+    {
+        if(newState == visibleDuringState){
+            QTE_UI.SetActive(true);
+            startQTE(CombatManager.Instance.QuickTimePresses);
+        }
+        else{
+            QTE_UI.SetActive(false);
+        }
+    }
+    #endregion
+    
+    // For some reason, the parent wouldnt render the hit circles.
+    //[SerializeField] 
+    //private GameObject parentPoolObj;
+
+    [SerializeField] 
+    private List<float> hitCircles = new List<float>();
+
+    // Since Hit circles spawn, the earlist one is First, 
+    // So it can follow a FIFO
+    // Pop the front and it automatically tells us which one is next
+    [SerializeField]
+    private Queue<GameObject> hitCircleQueue = new Queue<GameObject>();
+    
+    [SerializeField]
+    private Transform circleSpawnPoint;
+
+    [SerializeField]
+    private GameObject hitCirclePrefab;
+
+    // This function is called when QTE happens
+    // Called by Combat Manager after recieving the call from UI Combat Buttons
+    public void startQTE(List<float> hitCirclesToSpawn){
+        StartCoroutine(SpawnHitCircles(hitCirclesToSpawn));
+    }
+
+    // Since I can't run a update method here
+    // Using a coroutine to run thru all elements in the given list
+    private IEnumerator SpawnHitCircles(List<float> hitCirclesToSpawn)
+    {
+    float timeSoFar = 0f;
+    int index = 0;
+
+    while (index < hitCirclesToSpawn.Count)
+    {
+        timeSoFar += Time.deltaTime;
+
+        if (timeSoFar >= hitCirclesToSpawn[index])
+            {
+            // Spawn a new hit circle and add it to the queue
+            GameObject circle = Instantiate(hitCirclePrefab, circleSpawnPoint);
+            Debug.Log("I SPAWNED A HIT CIRCLE");
+            hitCircleQueue.Enqueue(circle);
+            index++;
+            }
+
+        yield return null; // wait for next frame
+        }
+    }
+
+
+
 }

@@ -3,9 +3,10 @@ using UnityEngine;
 public class UICombatButtons : MonoBehaviour
 {
     public GameObject combatButtons;
-    [SerializeField] private CombatUIState visibleDuringState = CombatUIState.PlayerTurn;
+    [SerializeField] 
+    private CombatUIState visibleDuringState = CombatUIState.PlayerTurn;
 
-    #region Listener
+    #region Event Listener
     private void OnEnable()
     {
         CombatManager.OnUIStateChanged += HandleUIStateChanged;
@@ -22,17 +23,17 @@ public class UICombatButtons : MonoBehaviour
             combatButtons.SetActive(true);
         }
         else{
-            combatButtons.SetActive(true);
+            combatButtons.SetActive(false);
         }
     }
     #endregion
 
     public void onAttackPress(){
-        CombatManager.Instance.doDamage(5, true);
+        CombatManager.Instance.SetUIState(CombatUIState.QTE);
     }
 
     public void onBlockPress(){
-        CombatManager.Instance.doDamage(3, true);
+        CombatManager.Instance.SetUIState(CombatUIState.QTE);
     }
 
 }
