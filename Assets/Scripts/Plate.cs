@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-public class Ingredient : MonoBehaviour
+public class Plate : MonoBehaviour
 
 {
     [SerializeField] private BoxCollider2D cursor;
@@ -11,7 +11,7 @@ public class Ingredient : MonoBehaviour
     void Start()
     {
         // Find the cursor object tagged as "Cursor" and get its BoxCollider2D component
-        
+
         cursor = GameObject.FindGameObjectWithTag("Cursor").GetComponent<BoxCollider2D>();
         plate = GameObject.FindGameObjectWithTag("Plate").GetComponent<BoxCollider2D>();
     }
@@ -43,16 +43,16 @@ public class Ingredient : MonoBehaviour
         }
 
         //if mouse is released and is overlapping with plate, set isplaced to true and snap to plate position
-        if (Input.GetMouseButtonUp(0))
-        {
-            if (plate.bounds.Intersects(GetComponent<Collider2D>().bounds))
-            {
-                isPlaced = true;
-                transform.position = new Vector3(plate.transform.position.x, plate.transform.position.y, transform.position.z);
-                // Set the ingredient as a child of the plate
-                transform.SetParent(plate.transform);
-            }
-        }
+        //if (Input.GetMouseButtonUp(0))
+        //{
+        //    if (plate.bounds.Intersects(GetComponent<Collider2D>().bounds))
+        //    {
+        //        isPlaced = true;
+        //        transform.position = new Vector3(plate.transform.position.x, plate.transform.position.y, transform.position.z);
+        //        // Set the ingredient as a child of the plate
+        //        transform.SetParent(plate.transform);
+        //    }
+        //}
 
     }
 }

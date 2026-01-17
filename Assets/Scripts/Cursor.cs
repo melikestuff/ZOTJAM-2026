@@ -5,7 +5,7 @@ public class Cursor : MonoBehaviour
     [SerializeField] private Camera mainCamera;
     [SerializeField] private float cameraFollowSpeed = 250f;
     [SerializeField] private float maxCameraDistance = 0.2f; // Maximum distance camera can move from initial position
-    [SerializeField] private float deadzoneRadius = 1.5f; // Distance before camera starts moving
+    [SerializeField] private float deadzoneRadius = 8.5f; // Distance before camera starts moving
 
     private Vector3 initialCameraPosition;
 

@@ -7,6 +7,7 @@ TagManager:
   - Cursor
   - Plate
   - Border
+  - Oven
   layers:
   - Default
   - TransparentFX
