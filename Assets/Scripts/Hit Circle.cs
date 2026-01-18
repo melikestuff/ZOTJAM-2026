@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class HitCircle : MonoBehaviour
 {
 
-    [SerializeField]
     public HitCircleColor isShadow;
     Coroutine qteCoroutine;
 
@@ -36,7 +35,6 @@ public class HitCircle : MonoBehaviour
     }
     private IEnumerator StartMoving()
     {
-        
         //Find how whats our speed and move the hit circle every frame
         // Depending on that speed.
         RectTransform rect = GetComponent<RectTransform>();

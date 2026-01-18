@@ -58,7 +58,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2da6cf05f5b3cf545a2ead44fad61457, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HitCircle
-  isRed: 0
+  isShadow: 0
+  shadowForm: {fileID: -5414578341369741660, guid: 94ec94be2cdf6f441aa0ed75a70c7597, type: 3}
 --- !u!114 &6935767036912005725
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -79,7 +80,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: -4230581096281360943, guid: bfd5663969d4d5b4b8e8cd7f8613586a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

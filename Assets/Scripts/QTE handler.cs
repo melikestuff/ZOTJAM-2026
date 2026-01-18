@@ -110,7 +110,7 @@ public class QTEhandler : MonoBehaviour
     int index = 0;
 
     while (index < hitCirclesToSpawn.Count)
-    {
+        {
         timeSoFar += Time.deltaTime;
 
         if (timeSoFar >= hitCirclesToSpawn[index].spawnTime)
@@ -118,8 +118,14 @@ public class QTEhandler : MonoBehaviour
             // Spawn a new hit circle and add it to the queue
             GameObject circle = Instantiate(hitCirclePrefab, circleSpawnPoint);
             circle.GetComponent<HitCircle>().getQTE_Reference(this);
-            circle.GetComponent<HitCircle>().isShadow = hitCirclesToSpawn[index].color; //== HitCircleColor.Blue;
-
+            circle.GetComponent<HitCircle>().isShadow = hitCirclesToSpawn[index].color; 
+            /*
+            if(circle.GetComponent<HitCircle>().isShadow == HitCircleColor.shadow)
+                {
+                    
+                }
+            circle.GetComponent<Texture2D>() = shadowForm;
+            */
 
             //circle.Transform.x = 0;
 
@@ -137,8 +143,10 @@ public class QTEhandler : MonoBehaviour
             index++;
             }
 
-        yield return null; // wait for next frame
+            yield return null; // wait for next frame
         }
+        // Prob add an indication that QTE can now be over
+
     }
 
     // I gave up tryna make it look nice lol
