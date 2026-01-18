@@ -49,8 +49,8 @@ public class GameController : MonoBehaviour
             // Update progress bar
             if (plateProgress1 != null)
             {
-                float progress = (1f - (plateTimer / plateCookTime)) * 2.6f;
-                plateProgress1.transform.localScale = new Vector3(progress, 1f, 1f);
+                float progress = (1f - (plateTimer / plateCookTime)) * 0.7f;
+                plateProgress1.transform.localScale = new Vector3(progress, 0.2f, 1f);
             }
             
             // Check if cooking is done
@@ -62,7 +62,7 @@ public class GameController : MonoBehaviour
                 // Update progress bar to full
                 if (plateProgress1 != null)
                 {
-                    plateProgress1.transform.localScale = new Vector3(2.6f, 1f, 1f);
+                    plateProgress1.transform.localScale = new Vector3(0.7f, 0.2f, 1f);
                 }
             }
         }
