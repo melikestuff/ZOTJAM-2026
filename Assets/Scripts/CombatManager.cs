@@ -132,4 +132,18 @@ public class CombatManager : MonoBehaviour
         }
         Debug.Log("Lost Money: " + amt);
     }
+
+    public bool passQuota()
+    {
+        if (Money >= QuotaRequired)
+        {
+            //Debug.Log("Quota Passed!");
+            return true;
+        }
+        else
+        {
+            //Debug.Log("Quota Not Met!");
+            return false;
+        }
+    }
 }
