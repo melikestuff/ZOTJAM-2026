@@ -14,6 +14,13 @@ public class Plate : MonoBehaviour
     public bool IsCooked { get; private set; } = false;
     private readonly List<string> ingredients = new List<string>();
 
+    // Per-plate ingredient state
+    public bool IsDoughPlaced { get; private set; } = false;
+    public bool IsSauceAdded { get; private set; } = false;
+    public bool IsCheeseAdded { get; private set; } = false;
+
+    private bool wasBeingDragged = false; // Track if THIS plate was being dragged
+
     void Start()
     {
         cursor = GameObject.FindGameObjectWithTag("Cursor").GetComponent<BoxCollider2D>();
@@ -21,6 +28,18 @@ public class Plate : MonoBehaviour
         cursorScript = GameObject.FindGameObjectWithTag("Cursor").GetComponent<Cursor>();
         gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
         platePos = GameObject.FindGameObjectWithTag("PlatePos")?.transform;
+
+        // Register this plate with the GameController
+        if (gc != null)
+        {
+            if (!gc.RegisterPlate(this))
+            {
+                // Plate limit exceeded, destroy this plate
+                Debug.LogWarning($"Plate limit exceeded. Destroying {name}.");
+                Destroy(gameObject);
+                return;
+            }
+        }
 
         // Log initial ingredient state
         LogIngredients();
@@ -48,6 +67,7 @@ public class Plate : MonoBehaviour
                     if (GameController.currentlyDraggedObject == null || GameController.currentlyDraggedObject == this)
                     {
                         GameController.currentlyDraggedObject = this;
+                        wasBeingDragged = true;
 
                         Vector3 mousePosition = Input.mousePosition;
                         mousePosition.z = 10;
@@ -61,98 +81,108 @@ public class Plate : MonoBehaviour
         // Clear the dragged object reference when mouse is released
         if (Input.GetMouseButtonUp(0))
         {
-            // FIRST: check for trash zone (destroy plate + children)
-            var trashObj = GameObject.FindGameObjectWithTag("Trash");
-            if (trashObj != null)
+            // Only process mouse release if THIS plate was being dragged
+            if (wasBeingDragged)
             {
-                BoxCollider2D trashCol = trashObj.GetComponent<BoxCollider2D>();
-                if (trashCol != null && trashCol.bounds.Intersects(GetComponent<Collider2D>().bounds))
+                // FIRST: check for trash zone (destroy plate + children)
+                var trashObj = GameObject.FindGameObjectWithTag("Trash");
+                if (trashObj != null)
                 {
-                    Destroy(gameObject); // destroys plate and all children
-                    GameController.currentlyDraggedObject = null;
-                    return;
-                }
-            }
-
-            // SECOND: check for drop-off zone
-            var dropOffObj = GameObject.FindGameObjectWithTag("DropOff");
-            if (dropOffObj != null)
-            {
-                BoxCollider2D dropOffCol = dropOffObj.GetComponent<BoxCollider2D>();
-                if (dropOffCol != null && dropOffCol.bounds.Intersects(GetComponent<Collider2D>().bounds))
-                {
-                    // Only consider delivering cooked plates
-                    if (IsCooked)
+                    BoxCollider2D trashCol = trashObj.GetComponent<BoxCollider2D>();
+                    if (trashCol != null && trashCol.bounds.Intersects(GetComponent<Collider2D>().bounds))
                     {
-                        // Ask GameController for matching sprite
-                        Sprite matched = gc.GetMatchingPizzaSprite(this);
-                        if (matched != null)
+                        if (gc != null)
+                            gc.UnregisterPlate(this);
+                        Destroy(gameObject); // destroys plate and all children
+                        GameController.currentlyDraggedObject = null;
+                        wasBeingDragged = false;
+                        return;
+                    }
+                }
+
+                // SECOND: check for drop-off zone
+                var dropOffObj = GameObject.FindGameObjectWithTag("DropOff");
+                if (dropOffObj != null)
+                {
+                    BoxCollider2D dropOffCol = dropOffObj.GetComponent<BoxCollider2D>();
+                    if (dropOffCol != null && dropOffCol.bounds.Intersects(GetComponent<Collider2D>().bounds))
+                    {
+                        // Only consider delivering cooked plates
+                        if (IsCooked)
                         {
-                            // Remove the first matching UI entry
-                            bool removed = gc.RemovePizzaListEntryBySprite(matched);
-                            Debug.Log($"Plate delivered matched pizza sprite: {matched.name}. Removed from list: {removed}");
+                            // Ask GameController for matching sprite
+                            Sprite matched = gc.GetMatchingPizzaSprite(this);
+                            if (matched != null)
+                            {
+                                // Remove the first matching UI entry
+                                bool removed = gc.RemovePizzaListEntryBySprite(matched);
+                                Debug.Log($"Plate delivered matched pizza sprite: {matched.name}. Removed from list: {removed}");
+                            }
+                            else
+                            {
+                                Debug.Log("Plate delivered did not match any pizza on the mapping (no removal).");
+                            }
+
+                            // Destroy plate after successful delivery
+                            // melikestuff's addition to add money
+                            CombatManager.Instance.gainMoney(Random.Range(4f, 10f));
+                            GameController.currentlyDraggedObject = null;
+                            if (gc != null)
+                                gc.UnregisterPlate(this);
+                            Destroy(gameObject);
+                            wasBeingDragged = false;
+                            return;
                         }
                         else
                         {
-                            Debug.Log("Plate delivered did not match any pizza on the mapping (no removal).");
+                            Debug.Log("Plate dropped on DropOff but is not cooked yet.");
+                            GameController.currentlyDraggedObject = null;
+                            wasBeingDragged = false;
+                            return;
                         }
-
-                        // Destroy plate after successful delivery
-                        // melikestuff's addition to add money
-                        CombatManager.Instance.gainMoney(Random.Range(4f, 10f));
-                        GameController.currentlyDraggedObject = null;
-                        Destroy(gameObject);
-                        return;
                     }
-                    else
+                }
+
+                // Check if plate is placed in oven
+                if (oven.bounds.Intersects(GetComponent<Collider2D>().bounds))
+                {
+                    // Do not allow cooked plates to be placed back into the oven
+                    if (IsCooked)
                     {
-                        Debug.Log("Plate dropped on DropOff but is not cooked yet.");
-                        GameController.currentlyDraggedObject = null;
-                        return;
+                        Debug.Log($"{name} is already cooked and cannot be placed back into the oven.");
+                        // snap back to start so it doesn't remain overlapping oven
+                        if (!isInOven)
+                            ResetToPlatePosition();
+                    }
+                    else if (!gc.isOvenCooking)
+                    {
+                        isInOven = true;
+                        transform.position = new Vector3(oven.transform.position.x, oven.transform.position.y, transform.position.z);
+
+                        // Start plate timer on GameController and register this plate as the current cooking plate
+                        gc.isOvenCooking = true;
+                        gc.plateTimer = gc.plateCookTime;
+                        gc.currentCookingPlate = this;
                     }
                 }
-            }
-
-            // Check if plate is placed in oven
-            if (oven.bounds.Intersects(GetComponent<Collider2D>().bounds))
-            {
-                // Do not allow cooked plates to be placed back into the oven
-                if (IsCooked)
+                else
                 {
-                    Debug.Log($"{name} is already cooked and cannot be placed back into the oven.");
-                    // snap back to start so it doesn't remain overlapping oven
-                    if (!isInOven)
+                    // Not in oven, reset position only if not cooked
+                    if (!isInOven && !IsCooked)
+                    {
                         ResetToPlatePosition();
+                    }
                 }
-                else if (!gc.isOvenCooking)
-                {
-                    isInOven = true;
-                    transform.position = new Vector3(oven.transform.position.x, oven.transform.position.y, transform.position.z);
 
-                    // Start plate timer on GameController and register this plate as the current cooking plate
-                    gc.isOvenCooking = true;
-                    gc.plateTimer = gc.plateCookTime;
-                    gc.currentCookingPlate = this;
-                }
+                GameController.currentlyDraggedObject = null;
+                wasBeingDragged = false;
             }
-            else
-            {
-                // Not in oven, reset position
-                if (!isInOven)
-                {
-                    ResetToPlatePosition();
-                }
-            }
-
-            GameController.currentlyDraggedObject = null;
         }
-        else
+
+        // Keep the plate on the starting position if not cooking
+        if (!gc.isOvenCooking)
         {
-            // Keep the plate on the starting position if not cooking
-            if (!gc.isOvenCooking)
-            {
-                isInOven = false;
-            }
+            isInOven = false;
         }
     }
 
@@ -173,6 +203,9 @@ public class Plate : MonoBehaviour
         if (!ingredients.Contains(key))
             ingredients.Add(key);
 
+        // Update per-plate ingredient flags
+        UpdateIngredientFlags();
+
         // Log current ingredient list after change
         LogIngredients();
     }
@@ -183,6 +216,9 @@ public class Plate : MonoBehaviour
             return false;
 
         bool removed = ingredients.Remove(ingredientType.ToLower());
+
+        // Update per-plate ingredient flags
+        UpdateIngredientFlags();
 
         // Log current ingredient list after change
         LogIngredients();
@@ -205,6 +241,14 @@ public class Plate : MonoBehaviour
         }
     }
 
+    // Update per-plate ingredient state flags based on current ingredients
+    private void UpdateIngredientFlags()
+    {
+        IsDoughPlaced = ingredients.Contains("dough");
+        IsSauceAdded = ingredients.Contains("sauce");
+        IsCheeseAdded = ingredients.Contains("cheese");
+    }
+
     // Called by GameController when cooking completes for this plate
     public void SetCooked(bool cooked)
     {
@@ -213,6 +257,10 @@ public class Plate : MonoBehaviour
             return;
 
         IsCooked = cooked;
+
+        // Notify GameController of state change
+        if (gc != null)
+            gc.OnPlateStateChanged(this);
 
         if (cooked)
         {
@@ -225,7 +273,6 @@ public class Plate : MonoBehaviour
                 var ing = child.GetComponent<Ingredient>();
                 if (ing != null && ing.IngredientType == "dough")
                 {
-                    // 0.95 => 5% darker (very slight)
                     ing.ApplyCookedTint(0.85f);
                 }
             }
@@ -244,5 +291,12 @@ public class Plate : MonoBehaviour
         {
             transform.position = new Vector3(3.3f, -3.5f, 0);
         }
+    }
+
+    // Called when this plate is destroyed (cleanup)
+    private void OnDestroy()
+    {
+        if (gc != null)
+            gc.UnregisterPlate(this);
     }
 }

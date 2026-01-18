@@ -6358,7 +6358,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.01, y: 1.7, z: 0}
-  m_LocalScale: {x: 0.6292199, y: 0.6292199, z: 0.6292199}
+  m_LocalScale: {x: 1.2986925, y: 1.2986925, z: 1.2986925}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -6612,7 +6612,7 @@ MonoBehaviour:
   cameraFollowSpeed: 6
   maxCameraDistanceVertical: 0.4
   maxCameraDistanceVerticalDown: 6
-  deadzoneRadius: 7.5
+  deadzoneRadius: 8.5
   isDragging: 0
 --- !u!1 &8324169744772603804
 GameObject:

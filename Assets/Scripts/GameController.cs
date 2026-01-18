@@ -68,11 +68,11 @@ public class GameController : MonoBehaviour
     public Sprite pizza8;
 
     public static MonoBehaviour currentlyDraggedObject = null;
-    
+
     public bool isOvenCooking = false;
     public float plateTimer = 0f;
     public float plateCookTime = 5f; // Time in seconds for cooking
-    
+
     private GameObject customer = null;
     private SpriteRenderer customerSpriteRenderer = null;
     private float spriteChangeTimer = 0f;
@@ -86,7 +86,10 @@ public class GameController : MonoBehaviour
 
     // Track the Plate currently in the oven so we can mark it cooked when timer ends
     public Plate currentCookingPlate = null;
-    
+
+    // Track active plates: only allow 1 uncooked plate that is NOT in the oven
+    private Plate activeUncookedPlate = null;
+
     void Start()
     {
         plateSpawner = GameObject.FindGameObjectWithTag("PlateSpawner");
@@ -103,7 +106,7 @@ public class GameController : MonoBehaviour
         {
             customer = Instantiate(customerPrefab, customerSpawnPoint.position, Quaternion.identity, parentObj);
             customerSpriteRenderer = customer.GetComponent<SpriteRenderer>();
-            
+
             if (customerSpriteRenderer != null)
             {
                 ChangeCustomerSprite();
@@ -139,7 +142,7 @@ public class GameController : MonoBehaviour
         HandleIngredientSpawning(PepperoniSpawner, pepperoniPrefab);
 
         HandlePlateSpawning(plateSpawner, platePrefab);
-        
+
         // Update customer sprite on its timer
         if (customerSpriteRenderer != null)
         {
@@ -161,32 +164,34 @@ public class GameController : MonoBehaviour
                 uiSpriteChangeTimer = spriteChangeInterval;
             }
         }
-        
+
         // Update plate timer
         if (isOvenCooking)
         {
             plateTimer -= Time.deltaTime;
-            
+
             // Update progress bar
             if (plateProgress1 != null)
             {
                 float progress = (1f - (plateTimer / plateCookTime)) * 0.7f;
                 plateProgress1.transform.localScale = new Vector3(progress, 0.2f, 1f);
             }
-            
+
             // Check if cooking is done
             if (plateTimer <= 0f)
             {
                 isOvenCooking = false;
                 plateTimer = 0f;
-                
+
                 // Mark the plate in the oven as cooked
                 if (currentCookingPlate != null)
                 {
                     currentCookingPlate.SetCooked(true);
+                    // Clear active uncooked plate since it's now cooked and in the oven
+                    activeUncookedPlate = null;
                     currentCookingPlate = null;
                 }
-                
+
                 // Update progress bar to full
                 if (plateProgress1 != null)
                 {
@@ -195,12 +200,12 @@ public class GameController : MonoBehaviour
             }
         }
     }
-    
+
     private void ChangeCustomerSprite()
     {
         if (customerSpriteRenderer == null)
             return;
-        
+
         // Ensure customer (and bubble container if assigned) becomes visible when we change sprite on the timer
         customerSpriteRenderer.enabled = true;
         if (Bubble != null)
@@ -256,7 +261,7 @@ public class GameController : MonoBehaviour
             return;
         }
 
-        uiPizza = Instantiate(uiPizzaPrefab, bubblePizzaSpawnPoint.position, Quaternion.identity,parentObj);
+        uiPizza = Instantiate(uiPizzaPrefab, bubblePizzaSpawnPoint.position, Quaternion.identity, parentObj);
 
         // Try to get a SpriteRenderer (for world-space sprite) or a UI.Image (for UI element)
         uiPizzaSpriteRenderer = uiPizza.GetComponent<SpriteRenderer>();
@@ -291,7 +296,7 @@ public class GameController : MonoBehaviour
             return;
         }
 
-        GameObject listEntry = Instantiate(PizzaListPrefab,parentObj);
+        GameObject listEntry = Instantiate(PizzaListPrefab, parentObj);
         // Parent under HorizontalLayoutParent while preserving local layout (useWorldPositionStays = false)
         listEntry.transform.SetParent(HorizontalLayoutParent.transform, false);
 
@@ -412,40 +417,99 @@ public class GameController : MonoBehaviour
 
         return false;
     }
-    
+
+    // Register a plate as active. Returns true if successful, false if limit exceeded.
+    // Allows 1 uncooked plate that is NOT cooking. Once a plate enters the oven, 
+    // a new uncooked plate can be spawned.
+    public bool RegisterPlate(Plate plate)
+    {
+        if (plate == null)
+            return false;
+
+        // Uncooked plates: only allow 1 at a time that is NOT in the oven
+        if (!plate.IsCooked)
+        {
+            // If there's already an active uncooked plate AND it's not the same one
+            if (activeUncookedPlate != null && activeUncookedPlate != plate)
+            {
+                // Only block if the existing plate is NOT currently cooking
+                if (!isOvenCooking)
+                {
+                    Debug.Log("Cannot spawn uncooked plate: 1 uncooked plate already active (not cooking).");
+                    return false;
+                }
+                // If oven IS cooking, allow this new plate to spawn (old one is in oven)
+            }
+
+            activeUncookedPlate = plate;
+            return true;
+        }
+
+        // Cooked plates have no limit
+        return true;
+    }
+
+    // Unregister a plate when it's destroyed
+    public void UnregisterPlate(Plate plate)
+    {
+        if (plate == null)
+            return;
+
+        if (plate == activeUncookedPlate)
+            activeUncookedPlate = null;
+    }
+
+    // Notify GameController when a plate changes cooking state
+    public void OnPlateStateChanged(Plate plate)
+    {
+        if (plate == null)
+            return;
+
+        // Update tracking when plate state changes (uncooked -> cooked)
+        if (plate.IsCooked && plate == activeUncookedPlate)
+        {
+            activeUncookedPlate = null;
+        }
+    }
+
     private void HandleIngredientSpawning(GameObject spawner, GameObject prefab)
     {
         if (spawner == null || prefab == null)
             return;
-        
+
         BoxCollider2D spawnerCollider = spawner.GetComponent<BoxCollider2D>();
         BoxCollider2D cursorCollider = GameObject.FindGameObjectWithTag("Cursor").GetComponent<BoxCollider2D>();
-        
+
         if (spawnerCollider == null || cursorCollider == null)
             return;
-        
+
         // Spawn ingredient when cursor is over spawner and mouse is clicked
         if (Input.GetMouseButtonDown(0) && spawnerCollider.bounds.Intersects(cursorCollider.bounds) && currentlyDraggedObject == null)
         {
             Instantiate(prefab, spawner.transform.position, Quaternion.identity, parentObj);
         }
     }
-    
+
     private void HandlePlateSpawning(GameObject spawner, GameObject prefab)
     {
         if (spawner == null || prefab == null)
             return;
-        
+
         BoxCollider2D spawnerCollider = spawner.GetComponent<BoxCollider2D>();
         BoxCollider2D cursorCollider = GameObject.FindGameObjectWithTag("Cursor").GetComponent<BoxCollider2D>();
-        
+
         if (spawnerCollider == null || cursorCollider == null)
             return;
-        
+
         // Spawn plate when cursor is over spawner and mouse is clicked
         if (Input.GetMouseButtonDown(0) && spawnerCollider.bounds.Intersects(cursorCollider.bounds) && currentlyDraggedObject == null)
         {
-            Instantiate(prefab, spawner.transform.position, Quaternion.identity, parentObj);
+            // Get cursor position and convert to world coordinates
+            Vector3 mousePosition = Input.mousePosition;
+            mousePosition.z = 10;
+            Vector3 worldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
+
+            Instantiate(prefab, worldPosition, Quaternion.identity, parentObj);
         }
     }
 }
