@@ -22,8 +22,8 @@ public class CombatManager : MonoBehaviour
     //
     // Handle any relevant combat data
     [SerializeField] private float enemyHP = 50;
-    [SerializeField] private float Money = 0;
-    [SerializeField] private float QuotaRequired = 100;
+    public float Money = 0;
+    public float QuotaRequired = 100;
     public QTE_Data QuickTimePresses;
 
     public TextMeshProUGUI quota;
