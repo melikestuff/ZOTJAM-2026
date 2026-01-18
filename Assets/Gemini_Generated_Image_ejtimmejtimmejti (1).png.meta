@@ -1,16 +1,10 @@
 fileFormatVersion: 2
-guid: 1d9b1894839033545845527de7ce87f1
+guid: cb38903dedc52aa44b56c5bc2d4b6198
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5073016375250356318
-    second: pizza_6_0
-  - first:
-      213: 3739312918476304797
-    second: pizza_6_1
-  - first:
-      213: 7225279591336539211
-    second: pizza_6_2
+      213: 5557198518664317042
+    second: Gemini_Generated_Image_ejtimmejtimmejti (1)_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -52,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -132,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: pizza_6_0
+      name: Gemini_Generated_Image_ejtimmejtimmejti (1)_0
       rect:
         serializedVersion: 2
-        x: 265
-        y: 345
-        width: 53
-        height: 61
+        x: 0
+        y: 0
+        width: 2688
+        height: 1536
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -147,52 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2a776751c760999b0800000000000000
-      internalID: -5073016375250356318
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: pizza_6_1
-      rect:
-        serializedVersion: 2
-        x: 220
-        y: 231
-        width: 51
-        height: 56
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: d913fc1a945b4e330800000000000000
-      internalID: 3739312918476304797
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: pizza_6_2
-      rect:
-        serializedVersion: 2
-        x: 317
-        y: 235
-        width: 61
-        height: 52
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: b447e74d189554460800000000000000
-      internalID: 7225279591336539211
+      spriteID: 27840530c922f1d40800000000000000
+      internalID: 5557198518664317042
       vertices: []
       indices: 
       edges: []
@@ -201,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -211,9 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      pizza_6_0: -5073016375250356318
-      pizza_6_1: 3739312918476304797
-      pizza_6_2: 7225279591336539211
+      Gemini_Generated_Image_ejtimmejtimmejti (1)_0: 5557198518664317042
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

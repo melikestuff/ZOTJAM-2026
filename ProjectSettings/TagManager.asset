@@ -12,6 +12,10 @@ TagManager:
   - CheeseSpawner
   - DoughSpawner
   - PlateSpawner
+  - PineappleSpawner
+  - MushroomSpawner
+  - BasilSpawner
+  - PepperoniSpawner
   layers:
   - Default
   - TransparentFX
@@ -48,6 +52,9 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Customer
+    uniqueID: 4130864311
     locked: 0
   - name: UI
     uniqueID: 937141441
