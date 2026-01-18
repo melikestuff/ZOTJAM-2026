@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class TimeManager : MonoBehaviour
 {
@@ -53,6 +54,7 @@ public class TimeManager : MonoBehaviour
 
     public void startMenuButton()
     {
+        SceneManager.LoadScene("Title Screen");
         Debug.Log("Start Menu Button Pressed");
     }
 }
