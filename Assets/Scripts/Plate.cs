@@ -112,7 +112,15 @@ public class Plate : MonoBehaviour
             // Check if plate is placed in oven
             if (oven.bounds.Intersects(GetComponent<Collider2D>().bounds))
             {
-                if (!gc.isOvenCooking)
+                // Do not allow cooked plates to be placed back into the oven
+                if (IsCooked)
+                {
+                    Debug.Log($"{name} is already cooked and cannot be placed back into the oven.");
+                    // snap back to start so it doesn't remain overlapping oven
+                    if (!isInOven)
+                        transform.position = new Vector3(3.3f, -3.5f, 0);
+                }
+                else if (!gc.isOvenCooking)
                 {
                     isInOven = true;
                     transform.position = new Vector3(oven.transform.position.x, oven.transform.position.y, transform.position.z);
@@ -196,6 +204,27 @@ public class Plate : MonoBehaviour
     // Called by GameController when cooking completes for this plate
     public void SetCooked(bool cooked)
     {
+        // Avoid reapplying tint if state already matches
+        if (IsCooked == cooked)
+            return;
+
         IsCooked = cooked;
+
+        if (cooked)
+        {
+            // Find any dough ingredient child and apply a very slight dark tint.
+            foreach (Transform child in transform)
+            {
+                if (child == null)
+                    continue;
+
+                var ing = child.GetComponent<Ingredient>();
+                if (ing != null && ing.IngredientType == "dough")
+                {
+                    // 0.95 => 5% darker (very slight)
+                    ing.ApplyCookedTint(0.7f);
+                }
+            }
+        }
     }
 }

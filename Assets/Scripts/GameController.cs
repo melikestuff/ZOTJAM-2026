@@ -28,6 +28,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private GameObject uiPizzaPrefab;
     [SerializeField] private GameObject PizzaListPrefab;
     [SerializeField] public GameObject HorizontalLayoutParent; // made public so other scripts can access
+    [SerializeField] public GameObject Bubble;
 
     public Transform customerSpawnPoint;
     public Transform bubblePizzaSpawnPoint;
@@ -44,6 +45,17 @@ public class GameController : MonoBehaviour
     public Sprite gen8;
     public Sprite gen9;
     public Sprite gen10;
+    public Sprite gen11;
+    public Sprite gen12;
+    public Sprite gen13;
+    public Sprite gen14;
+    public Sprite gen15;
+    public Sprite gen16;
+    public Sprite gen17;
+    public Sprite gen18;
+    public Sprite gen19;
+    public Sprite gen20;
+    public Sprite gen21;
 
     public Sprite pizza1;
     public Sprite pizza2;
@@ -188,21 +200,31 @@ public class GameController : MonoBehaviour
         if (customerSpriteRenderer == null)
             return;
         
-        // Ensure customer becomes visible when we change sprite on the timer
+        // Ensure customer (and bubble container if assigned) becomes visible when we change sprite on the timer
         customerSpriteRenderer.enabled = true;
+        if (Bubble != null)
+            Bubble.SetActive(true);
 
-        Sprite[] customerSprites = { gen1, gen2, gen3, gen4, gen5, gen6, gen7, gen8, gen9, gen10 };
+        // expanded range: gen1 .. gen21
+        Sprite[] customerSprites = {
+            gen1, gen2, gen3, gen4, gen5, gen6, gen7, gen8, gen9, gen10,
+            gen11, gen12, gen13, gen14, gen15, gen16, gen17, gen18, gen19, gen20, gen21
+        };
+
         int randomIndex = Random.Range(0, customerSprites.Length);
         customerSpriteRenderer.sprite = customerSprites[randomIndex];
     }
 
     private void ChangeUIPizzaSprite()
     {
-        // Make UI pizza visible again when we change sprite on the timer
+        // Make UI pizza visible again when we change sprite on the timer (and ensure bubble active)
         if (uiPizzaSpriteRenderer != null)
             uiPizzaSpriteRenderer.enabled = true;
         else if (uiPizzaImage != null)
             uiPizzaImage.enabled = true;
+
+        if (Bubble != null)
+            Bubble.SetActive(true);
 
         Sprite[] pizzaSprites = { pizza1, pizza2, pizza3, pizza4, pizza5, pizza6, pizza7, pizza8 };
         int randomIndex = Random.Range(0, pizzaSprites.Length);
@@ -378,6 +400,10 @@ public class GameController : MonoBehaviour
                     uiPizzaSpriteRenderer.enabled = false;
                 if (uiPizzaImage != null)
                     uiPizzaImage.enabled = false;
+
+                // Also hide the bubble container if assigned (so both customer and bubble are invisible)
+                if (Bubble != null)
+                    Bubble.SetActive(false);
 
                 return true;
             }

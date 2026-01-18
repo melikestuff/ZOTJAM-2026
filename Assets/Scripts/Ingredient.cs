@@ -1,3 +1,4 @@
+using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,6 +11,9 @@ public class Ingredient : MonoBehaviour
     
     public Cursor cursorScript;
     public GameController gc;
+
+    // Expose ingredient type for other scripts (read-only, normalized to lower-case)
+    public string IngredientType => ingredientType?.ToLower();
 
     void Start()
     {
@@ -176,5 +180,20 @@ public class Ingredient : MonoBehaviour
                 gc.isCheeseAdded = true;
                 break;
         }
+    }
+
+    // Apply a slight dark tint to this ingredient's sprite to indicate cooking.
+    // multiplier: values <1 darken, 1 leaves unchanged (default 0.95 = 5% darker)
+    public void ApplyCookedTint(float multiplier = 0.85f)
+    {
+        var sr = GetComponent<SpriteRenderer>();
+        if (sr == null)
+            return;
+
+        Color c = sr.color;
+        c.r *= multiplier;
+        c.g *= multiplier;
+        c.b *= multiplier;
+        sr.color = c;
     }
 }
