@@ -60,7 +60,7 @@ public class Plate : MonoBehaviour
                 if (!isInOven)
                 {
                     isPlaced = false;
-                    transform.position = new Vector3(0.88f, -2.79f, 0);
+                    transform.position = new Vector3(3.3f, -3.5f, 0);
                 }
             }
 
