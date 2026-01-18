@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
+    public Transform parentObj;
     public bool isDoughPlaced = false;
     public bool isSauceAdded = false;
     public bool isCheeseAdded = false;
@@ -100,7 +101,7 @@ public class GameController : MonoBehaviour
         // Spawn customer prefab with random sprite gen1-10 at customer spawner position
         if (customerPrefab != null && customerSpawnPoint != null)
         {
-            customer = Instantiate(customerPrefab, customerSpawnPoint.position, Quaternion.identity);
+            customer = Instantiate(customerPrefab, customerSpawnPoint.position, Quaternion.identity, parentObj);
             customerSpriteRenderer = customer.GetComponent<SpriteRenderer>();
             
             if (customerSpriteRenderer != null)
@@ -255,7 +256,7 @@ public class GameController : MonoBehaviour
             return;
         }
 
-        uiPizza = Instantiate(uiPizzaPrefab, bubblePizzaSpawnPoint.position, Quaternion.identity);
+        uiPizza = Instantiate(uiPizzaPrefab, bubblePizzaSpawnPoint.position, Quaternion.identity,parentObj);
 
         // Try to get a SpriteRenderer (for world-space sprite) or a UI.Image (for UI element)
         uiPizzaSpriteRenderer = uiPizza.GetComponent<SpriteRenderer>();
@@ -290,7 +291,7 @@ public class GameController : MonoBehaviour
             return;
         }
 
-        GameObject listEntry = Instantiate(PizzaListPrefab);
+        GameObject listEntry = Instantiate(PizzaListPrefab,parentObj);
         // Parent under HorizontalLayoutParent while preserving local layout (useWorldPositionStays = false)
         listEntry.transform.SetParent(HorizontalLayoutParent.transform, false);
 
@@ -426,7 +427,7 @@ public class GameController : MonoBehaviour
         // Spawn ingredient when cursor is over spawner and mouse is clicked
         if (Input.GetMouseButtonDown(0) && spawnerCollider.bounds.Intersects(cursorCollider.bounds) && currentlyDraggedObject == null)
         {
-            Instantiate(prefab, spawner.transform.position, Quaternion.identity);
+            Instantiate(prefab, spawner.transform.position, Quaternion.identity, parentObj);
         }
     }
     
@@ -444,7 +445,7 @@ public class GameController : MonoBehaviour
         // Spawn plate when cursor is over spawner and mouse is clicked
         if (Input.GetMouseButtonDown(0) && spawnerCollider.bounds.Intersects(cursorCollider.bounds) && currentlyDraggedObject == null)
         {
-            Instantiate(prefab, spawner.transform.position, Quaternion.identity);
+            Instantiate(prefab, spawner.transform.position, Quaternion.identity, parentObj);
         }
     }
 }

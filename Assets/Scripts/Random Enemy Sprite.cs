@@ -11,6 +11,11 @@ public class RandomEnemySprite : MonoBehaviour
     private CombatUIState visibleExceptState = CombatUIState.notInDream;
     [SerializeField]
     private GameObject QTE_UI;
+
+    [SerializeField] private GameObject interactables;
+    [SerializeField] private GameObject background;
+    [SerializeField] private GameObject nightmareScene;
+
     private void OnEnable()
     {
         CombatManager.OnUIStateChanged += HandleUIStateChanged;
@@ -27,9 +32,15 @@ public class RandomEnemySprite : MonoBehaviour
         if (newState != visibleExceptState)
         {
             QTE_UI.SetActive(true);
+            interactables.SetActive(false);
+            background.SetActive(false);
+            nightmareScene.SetActive(true);
         }
         else{
             QTE_UI.SetActive(false);
+            interactables.SetActive(true);
+            background.SetActive(true);
+            nightmareScene.SetActive(false);
         }
     }
     #endregion

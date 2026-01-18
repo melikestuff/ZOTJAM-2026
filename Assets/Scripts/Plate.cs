@@ -98,6 +98,8 @@ public class Plate : MonoBehaviour
                         }
 
                         // Destroy plate after successful delivery
+                        // melikestuff's addition to add money
+                        CombatManager.Instance.gainMoney(Random.Range(4f, 10f));
                         GameController.currentlyDraggedObject = null;
                         Destroy(gameObject);
                         return;
