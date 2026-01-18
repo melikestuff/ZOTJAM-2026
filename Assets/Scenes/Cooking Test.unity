@@ -250,6 +250,16 @@ MonoBehaviour:
   saucePrefab: {fileID: 8412544960950513506, guid: 55a23bc845c99c94ba217dc66b787f79, type: 3}
   cheesePrefab: {fileID: 3956606323676413185, guid: 677e522c84498bb448036a19457663fb, type: 3}
   doughPrefab: {fileID: 6746246404259649195, guid: 8a24fa01372b03247b795c7d9a8706ca, type: 3}
+  gen1: {fileID: -6971710056602158514, guid: 80c3b94cd932745419cfac184360aa4c, type: 3}
+  gen2: {fileID: -8195584647531501971, guid: 0e58ecf50849e15488310c9d8e9ce593, type: 3}
+  gen3: {fileID: 6253776163702326826, guid: 0c7bfba3877e9de47ac036d302419e83, type: 3}
+  gen4: {fileID: 9199054035710177597, guid: ad2423fd2754cc4409b7a04e1d78a29b, type: 3}
+  gen5: {fileID: -3692881777128559750, guid: 775fafafcddc0634fa2a137b66b0c547, type: 3}
+  gen6: {fileID: 1002616937556800466, guid: 75937c5972eb96345b0ebaee714590a2, type: 3}
+  gen7: {fileID: 5915151689365197779, guid: eea515375eb42dd4c9faad9404b2bc20, type: 3}
+  gen8: {fileID: 383163232337114218, guid: 56f287a1408e07246b730560f7eb4dfc, type: 3}
+  gen9: {fileID: 9164433223072878016, guid: 12030591ff8d02c49b2dab28fdadaff6, type: 3}
+  gen10: {fileID: -236025876333659047, guid: 038d2402a06d2f54aacffa9b2562437a, type: 3}
   isOvenCooking: 0
   plateTimer: 0
   plateCookTime: 5

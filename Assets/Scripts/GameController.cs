@@ -16,6 +16,17 @@ public class GameController : MonoBehaviour
     [SerializeField] private GameObject cheesePrefab;
     [SerializeField] private GameObject doughPrefab;
 
+    public Sprite gen1;
+    public Sprite gen2;
+    public Sprite gen3;
+    public Sprite gen4;
+    public Sprite gen5;
+    public Sprite gen6;
+    public Sprite gen7;
+    public Sprite gen8;
+    public Sprite gen9;
+    public Sprite gen10;
+
     public static MonoBehaviour currentlyDraggedObject = null;
     
     public bool isOvenCooking = false;
@@ -32,6 +43,9 @@ public class GameController : MonoBehaviour
         doughSpawner = GameObject.FindGameObjectWithTag("DoughSpawner");
         
         plateCollider = GameObject.FindGameObjectWithTag("Plate").GetComponent<BoxCollider2D>();
+
+        // spawn object with sprite gen1 at plate spawner position
+
     }
 
     void Update()
