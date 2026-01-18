@@ -63,7 +63,7 @@ public class QTEhandler : MonoBehaviour
     {
         if(newState == visibleDuringState){
             QTE_UI.SetActive(true);
-            startQTE(CombatManager.Instance.QuickTimePresses);
+            startQTE(CombatManager.Instance.getAQTE());
         }
         else{
             QTE_UI.SetActive(false);
