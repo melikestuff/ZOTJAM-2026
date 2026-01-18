@@ -1903,7 +1903,7 @@ MonoBehaviour:
   circleSpawnPoint: {fileID: 1405681786}
   hitCirclePrefab: {fileID: 1234154427690463745, guid: 1a3becd5ff1146d42a077d1fb62205ed, type: 3}
   currHitCircle: {fileID: 0}
-  timeForQTE: 1.2
+  timeForQTE: 2
 --- !u!1 &1986351148
 GameObject:
   m_ObjectHideFlags: 0

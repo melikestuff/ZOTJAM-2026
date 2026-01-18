@@ -79,8 +79,7 @@ public class QTEhandler : MonoBehaviour
     // Since Hit circles spawn, the earlist one is First, 
     // So it can follow a FIFO
     // Pop the front and it automatically tells us which one is next
-    [SerializeField]
-    private Queue<GameObject> hitCircleQueue = new Queue<GameObject>();
+    public Queue<GameObject> hitCircleQueue = new Queue<GameObject>();
     
     [SerializeField]
     private Transform circleSpawnPoint;
@@ -90,8 +89,7 @@ public class QTEhandler : MonoBehaviour
 
     // This is just so that we can see which one is left most in 
     // Inspector
-    [SerializeField]
-    private GameObject currHitCircle;
+    public GameObject currHitCircle;
 
     public float timeForQTE;
 
@@ -119,9 +117,9 @@ public class QTEhandler : MonoBehaviour
             circle.GetComponent<HitCircle>().getQTE_Reference(this);
             //circle.Transform.x = 0;
 
-            Debug.Log("I SPAWNED A HIT CIRCLE");
+            //Debug.Log("I SPAWNED A HIT CIRCLE");
             // Do some queue magic, so we know
-            // Which one is always the left most one
+            // Which one is always the right most one
             // Since they all move at the same speed
 
             hitCircleQueue.Enqueue(circle);
@@ -137,6 +135,66 @@ public class QTEhandler : MonoBehaviour
         }
     }
 
+    // I gave up tryna make it look nice lol
+    // Now every frame check if Z and X were pressed
+    // Then check if theres an active hit circle
+    // If theres nothing, do nothing
+    // If theres a hit circle, do some logic on its position and
+    // Calculate score for that
+    public void Update()
+    {
+        if (hitCircleQueue.Count > 0 && hitCircleQueue.Peek() != null)
+        {
+            if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.X))
+            {
+                HitCircle theCircle = currHitCircle.GetComponent<HitCircle>();
+                bool color = theCircle.isShadow;
+                float posX = theCircle.destroyThisHitCircle();
 
-
+                //Check if color is even correct
+                if (!color)
+                {
+                    //Check if hit circle is in the goodRange
+                    //Check if its in green range 
+                    //Debug.Log("Goodrange is " + (goodRange.anchoredPosition.x - 50) + " >< " + goodRange.anchoredPosition.x + 50);
+                    //Debug.Log(posX);
+                    if(posX > goodRange.anchoredPosition.x - goodRangeWidth/2 && posX < goodRange.anchoredPosition.x + goodRangeWidth/2)
+                    {
+                        Debug.Log("Good!");
+                    }
+                    // Check if its in yellow now
+                    else if(posX > mediumRange.anchoredPosition.x - mediumRangeWidth/2 && posX < mediumRange.anchoredPosition.x + mediumRangeWidth/2)
+                    {
+                        Debug.Log("Medium...");
+                    }
+                    //If hit circle is in niether, then assume player missed timing of 
+                    // The hit circle and it is outside the range
+                    else
+                    {
+                        Debug.Log("BAD BAD BAD BAD");
+                    }
+                }
+            }
+        }
+        
+    }
+/*
+// Check if were First in queue
+            // AKa right-most circle
+            //Debug.Log(qteScript.hitCircleQueue.Peek() == this);
+            if(qteScript.hitCircleQueue.Peek() == gameObject)
+                {
+                // Input check
+                if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.X))
+                    {
+                        Debug.Log("Input registered");
+                        qteScript.hitCircleQueue.Dequeue();
+                        if (qteScript.hitCircleQueue.Peek() != null)
+                            {
+                            qteScript.currHitCircle = qteScript.hitCircleQueue.Peek();
+                            }
+                    yield break;
+                    }
+                }
+*/
 }
