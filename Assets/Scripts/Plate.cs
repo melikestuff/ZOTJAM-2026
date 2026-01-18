@@ -1,11 +1,9 @@
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Plate : MonoBehaviour
 {
     [SerializeField] private BoxCollider2D cursor;
-    [SerializeField] private BoxCollider2D plate;
+    [SerializeField] private BoxCollider2D oven;
     [SerializeField] private bool isPlaced = false;
     [SerializeField] private bool isInOven = false;
     public Cursor cursorScript;
@@ -14,7 +12,7 @@ public class Plate : MonoBehaviour
     void Start()
     {
         cursor = GameObject.FindGameObjectWithTag("Cursor").GetComponent<BoxCollider2D>();
-        plate = GameObject.FindGameObjectWithTag("Oven").GetComponent<BoxCollider2D>();
+        oven = GameObject.FindGameObjectWithTag("Oven").GetComponent<BoxCollider2D>();
         cursorScript = GameObject.FindGameObjectWithTag("Cursor").GetComponent<Cursor>();
         gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
     }
@@ -26,8 +24,8 @@ public class Plate : MonoBehaviour
             // Check if the plate is overlapping with the cursor collider
             if (cursor.bounds.Intersects(GetComponent<Collider2D>().bounds))
             {
-                // Only allow dragging if cheese is placed, not in oven, and no other object is being dragged
-                if (gc.isCheeseAdded && !gc.isOvenCooking && (GameController.currentlyDraggedObject == null || GameController.currentlyDraggedObject == this))
+                // Only allow dragging if no other object is being dragged or this plate is already being dragged
+                if (GameController.currentlyDraggedObject == null || GameController.currentlyDraggedObject == this)
                 {
                     GameController.currentlyDraggedObject = this;
 
@@ -35,10 +33,6 @@ public class Plate : MonoBehaviour
                     mousePosition.z = 10;
                     Vector3 worldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
                     transform.position = new Vector3(worldPosition.x, worldPosition.y, transform.position.z);
-                    if (!isPlaced)
-                    {
-                        
-                    }
                 }
             }
         }
@@ -47,27 +41,26 @@ public class Plate : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             // Check if plate is placed in oven
-            if (plate.bounds.Intersects(GetComponent<Collider2D>().bounds))
+            if (oven.bounds.Intersects(GetComponent<Collider2D>().bounds))
             {
                 if (!gc.isOvenCooking)
                 {
                     isInOven = true;
                     isPlaced = true;
-                    transform.position = new Vector3(plate.transform.position.x, plate.transform.position.y, transform.position.z);
+                    transform.position = new Vector3(oven.transform.position.x, oven.transform.position.y, transform.position.z);
                     
-                    // Start oven timer
+                    // Start plate timer
                     gc.isOvenCooking = true;
-                    gc.ovenTimer = gc.ovenCookTime;
+                    gc.plateTimer = gc.plateCookTime;
                 }
             }
             else
             {
-                // Not in oven, reset isPlaced if not in oven
+                // Not in oven, reset position
                 if (!isInOven)
                 {
                     isPlaced = false;
-                    transform.position = new Vector3((float)0.88, (float)-2.79, 0);
-
+                    transform.position = new Vector3(0.88f, -2.79f, 0);
                 }
             }
 

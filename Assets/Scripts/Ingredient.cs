@@ -4,18 +4,21 @@ using UnityEngine;
 public class Ingredient : MonoBehaviour
 {
     [SerializeField] private BoxCollider2D cursor;
-    [SerializeField] private BoxCollider2D oven;
+    [SerializeField] private BoxCollider2D plate;
     [SerializeField] private string ingredientType = "dough"; // "dough", "sauce", or "cheese"
     [SerializeField] private bool isPlaced = false;
+    
     public Cursor cursorScript;
     public GameController gc;
 
     void Start()
     {
         cursor = GameObject.FindGameObjectWithTag("Cursor").GetComponent<BoxCollider2D>();
-        oven = GameObject.FindGameObjectWithTag("Plate").GetComponent<BoxCollider2D>();
+        plate = GameObject.FindGameObjectWithTag("Plate").GetComponent<BoxCollider2D>();
+
         cursorScript = GameObject.FindGameObjectWithTag("Cursor").GetComponent<Cursor>();
         gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
+        
     }
 
     void Update()
@@ -44,14 +47,14 @@ public class Ingredient : MonoBehaviour
         // Clear the dragged ingredient reference when mouse is released
         if (Input.GetMouseButtonUp(0))
         {
-            if (oven.bounds.Intersects(GetComponent<Collider2D>().bounds))
+            if (plate.bounds.Intersects(GetComponent<Collider2D>().bounds))
             {
                 // Check if prerequisites are met
                 if (CanPlace())
                 {
                     isPlaced = true;
-                    transform.position = new Vector3(oven.transform.position.x, oven.transform.position.y, transform.position.z);
-                    transform.SetParent(oven.transform);
+                    transform.position = new Vector3(plate.transform.position.x, plate.transform.position.y, transform.position.z);
+                    transform.SetParent(plate.transform);
                     UpdateGameController();
                 }
             }

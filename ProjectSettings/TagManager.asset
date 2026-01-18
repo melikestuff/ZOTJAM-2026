@@ -8,6 +8,10 @@ TagManager:
   - Plate
   - Border
   - Oven
+  - SauceSpawner
+  - CheeseSpawner
+  - DoughSpawner
+  - PlateSpawner
   layers:
   - Default
   - TransparentFX
@@ -44,6 +48,9 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: UI
+    uniqueID: 937141441
     locked: 0
   m_RenderingLayers:
   - Default
