@@ -73,6 +73,13 @@ public class Ingredient : MonoBehaviour
                     // Place exactly at plate local origin (preserve current z)
                     transform.localPosition = new Vector3(0f, 0f, transform.localPosition.z);
 
+                    // Notify the plate script about this new ingredient so its internal list stays in sync
+                    var plateScript = targetPlate.GetComponent<Plate>();
+                    if (plateScript != null)
+                    {
+                        plateScript.AddIngredient(ingredientType);
+                    }
+
                     UpdateGameController();
                 }
             }

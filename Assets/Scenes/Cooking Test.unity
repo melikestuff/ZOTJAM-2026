@@ -222,7 +222,7 @@ GameObject:
   - component: {fileID: 114069697}
   m_Layer: 0
   m_Name: Trash
-  m_TagString: Untagged
+  m_TagString: Trash
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -676,7 +676,7 @@ GameObject:
   - component: {fileID: 311403109}
   m_Layer: 0
   m_Name: PizzaDropOff
-  m_TagString: Untagged
+  m_TagString: DropOff
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -943,8 +943,6 @@ MonoBehaviour:
   uiPizzaPrefab: {fileID: 2728793059965475573, guid: e07ce70e31afb474ebf3f63aaa4c713a, type: 3}
   PizzaListPrefab: {fileID: 1898095916231426442, guid: 7a82442d1c9ccd04f90a3500ad11cb4e, type: 3}
   HorizontalLayoutParent: {fileID: 789781430}
-  DropOffZone: {fileID: 311403106}
-  Trash: {fileID: 114069696}
   customerSpawnPoint: {fileID: 1013303527}
   bubblePizzaSpawnPoint: {fileID: 340858675}
   gen1: {fileID: -6971710056602158514, guid: 80c3b94cd932745419cfac184360aa4c, type: 3}
@@ -968,6 +966,7 @@ MonoBehaviour:
   isOvenCooking: 0
   plateTimer: 0
   plateCookTime: 5
+  currentCookingPlate: {fileID: 0}
 --- !u!4 &361284524
 Transform:
   m_ObjectHideFlags: 0
@@ -4571,8 +4570,8 @@ Transform:
   m_GameObject: {fileID: 1946494439}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 11.9, y: -3.51, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 9.17, y: -4.09, z: 0}
+  m_LocalScale: {x: 0.7, y: 0.85, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1370373575}
