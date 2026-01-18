@@ -59,7 +59,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HitCircle
   isShadow: 0
-  shadowForm: {fileID: -5414578341369741660, guid: 94ec94be2cdf6f441aa0ed75a70c7597, type: 3}
+  targetImage: {fileID: 6935767036912005725}
+  newSprite: {fileID: -5414578341369741660, guid: 94ec94be2cdf6f441aa0ed75a70c7597, type: 3}
 --- !u!114 &6935767036912005725
 MonoBehaviour:
   m_ObjectHideFlags: 0

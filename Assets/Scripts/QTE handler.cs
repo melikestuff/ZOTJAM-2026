@@ -95,6 +95,12 @@ public class QTEhandler : MonoBehaviour
 
     public float timeForQTE;
 
+    public float totalDmg = 0;
+
+    public bool isSpawningQTE = false;
+
+    public int totalCircles = 0;
+
     // This function is called when QTE happens
     // Called by Combat Manager after recieving the call from UI Combat Buttons
     public void startQTE(QTE_Data data)
@@ -102,49 +108,49 @@ public class QTEhandler : MonoBehaviour
         StartCoroutine(SpawnHitCircles(data.hitCircles));
     }
 
+
+
     // Since I can't run a update method here
     // Using a coroutine to run thru all elements in the given list
     private IEnumerator SpawnHitCircles(List<HitCircleData> hitCirclesToSpawn)
     {
-    float timeSoFar = 0f;
-    int index = 0;
+        float timeSoFar = 0f;
+        int index = 0;
+        isSpawningQTE = true;
+        totalDmg = 0;
+        totalCircles = hitCirclesToSpawn.Count;
 
-    while (index < hitCirclesToSpawn.Count)
-        {
-        timeSoFar += Time.deltaTime;
 
-        if (timeSoFar >= hitCirclesToSpawn[index].spawnTime)
+
+        while (index < hitCirclesToSpawn.Count)
             {
-            // Spawn a new hit circle and add it to the queue
-            GameObject circle = Instantiate(hitCirclePrefab, circleSpawnPoint);
-            circle.GetComponent<HitCircle>().getQTE_Reference(this);
-            circle.GetComponent<HitCircle>().isShadow = hitCirclesToSpawn[index].color; 
-            /*
-            if(circle.GetComponent<HitCircle>().isShadow == HitCircleColor.shadow)
-                {
-                    
-                }
-            circle.GetComponent<Texture2D>() = shadowForm;
-            */
+            timeSoFar += Time.deltaTime;
 
-            //circle.Transform.x = 0;
+            if (timeSoFar >= hitCirclesToSpawn[index].spawnTime)
+            {
+                // Spawn a new hit circle and add it to the queue
+                GameObject circle = Instantiate(hitCirclePrefab, circleSpawnPoint);
+                circle.GetComponent<HitCircle>().getQTE_Reference(this);
+                circle.GetComponent<HitCircle>().isShadow = hitCirclesToSpawn[index].color;
 
-            //Debug.Log("I SPAWNED A HIT CIRCLE");
-            // Do some queue magic, so we know
-            // Which one is always the right most one
-            // Since they all move at the same speed
+                //circle.Transform.x = 0;
 
-            hitCircleQueue.Enqueue(circle);
-            currHitCircle = hitCircleQueue.Peek(); 
-            //Debug.Log(goodRange.anchoredPosition.x);
-            //Debug.Log(goodRangeWidth);
-            
-            circle.GetComponent<HitCircle>().spawnHitCircle();
-            index++;
+                //Debug.Log("I SPAWNED A HIT CIRCLE");
+                // Do some queue magic, so we know
+                // Which one is always the right most one
+                // Since they all move at the same speed
+
+                hitCircleQueue.Enqueue(circle);
+                currHitCircle = hitCircleQueue.Peek();
+                //Debug.Log(goodRange.anchoredPosition.x);
+                //Debug.Log(goodRangeWidth);
+
+                circle.GetComponent<HitCircle>().spawnHitCircle();
+                index++;
             }
-
             yield return null; // wait for next frame
         }
+        isSpawningQTE = false;
         // Prob add an indication that QTE can now be over
 
     }
@@ -159,7 +165,10 @@ public class QTEhandler : MonoBehaviour
     {
         if (hitCircleQueue.Count > 0 && hitCircleQueue.Peek() != null)
         {
-            if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.X))
+
+            // X are normal key taps
+            #region normals
+            if (Input.GetKeyDown(KeyCode.X))
             {
                 HitCircle theCircle = currHitCircle.GetComponent<HitCircle>();
                 HitCircleColor color = theCircle.isShadow;
@@ -175,22 +184,84 @@ public class QTEhandler : MonoBehaviour
                     if(posX > goodRange.anchoredPosition.x - goodRangeWidth/2 && posX < goodRange.anchoredPosition.x + goodRangeWidth/2)
                     {
                         Debug.Log("Good!");
+                        totalDmg += 3;
                     }
                     // Check if its in yellow now
                     else if(posX > mediumRange.anchoredPosition.x - mediumRangeWidth/2 && posX < mediumRange.anchoredPosition.x + mediumRangeWidth/2)
                     {
                         Debug.Log("Medium...");
+                        totalDmg += 2;
                     }
                     //If hit circle is in niether, then assume player missed timing of 
                     // The hit circle and it is outside the range
                     else
                     {
                         Debug.Log("BAD BAD BAD BAD");
+                        totalDmg += 1;
                     }
+                }
+                else
+                {
+                    Debug.Log("BAD BAD BAD BAD");
+                    totalDmg += 1;
+                }
+            }
+            #endregion
+
+            // Z are shadow key taps
+            #region shadow taps
+            if (Input.GetKeyDown(KeyCode.Z))
+            {
+                HitCircle theCircle = currHitCircle.GetComponent<HitCircle>();
+                HitCircleColor color = theCircle.isShadow;
+                float posX = theCircle.destroyThisHitCircle();
+
+                //Check if color is even correct
+                if (color == HitCircleColor.shadow)
+                {
+                    //Check if hit circle is in the goodRange
+                    //Check if its in green range 
+                    //Debug.Log("Goodrange is " + (goodRange.anchoredPosition.x - 50) + " >< " + goodRange.anchoredPosition.x + 50);
+                    //Debug.Log(posX);
+                    if (posX > goodRange.anchoredPosition.x - goodRangeWidth / 2 && posX < goodRange.anchoredPosition.x + goodRangeWidth / 2)
+                    {
+                        Debug.Log("Good!");
+                        totalDmg += 3;
+                    }
+                    // Check if its in yellow now
+                    else if (posX > mediumRange.anchoredPosition.x - mediumRangeWidth / 2 && posX < mediumRange.anchoredPosition.x + mediumRangeWidth / 2)
+                    {
+                        Debug.Log("Medium...");
+                        totalDmg += 2;
+                    }
+                    //If hit circle is in niether, then assume player missed timing of 
+                    // The hit circle and it is outside the range
+                    else
+                    {
+                        Debug.Log("BAD BAD BAD BAD");
+                        totalDmg += 1;
+                    }
+                }
+                else
+                {
+                    Debug.Log("BAD BAD BAD BAD");
+                    totalDmg += 1;
+                }
+            }
+            #endregion
+            if (!isSpawningQTE && hitCircleQueue.Count == 0)
+            {
+                // QTE is over
+                CombatManager.Instance.doDmgToEnemy(totalDmg * 1.5f);
+                CombatManager.Instance.loseMoney(Random.Range(0f,2f));
+                totalDmg = 0;
+                if(CombatManager.Instance.CurrentUIState != CombatUIState.notInDream)
+                {
+                    CombatManager.Instance.SetUIState(CombatUIState.PlayerTurn);
                 }
             }
         }
-        
+
     }
 /*
 // Check if were First in queue

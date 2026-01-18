@@ -1,11 +1,15 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class HitCircle : MonoBehaviour
 {
 
     public HitCircleColor isShadow;
+    [SerializeField] private Image targetImage;
+    [SerializeField] private Sprite newSprite;
+
     Coroutine qteCoroutine;
 
     QTEhandler qteScript;
@@ -35,6 +39,10 @@ public class HitCircle : MonoBehaviour
     }
     private IEnumerator StartMoving()
     {
+        if (isShadow == HitCircleColor.shadow)
+        {
+            targetImage.sprite = newSprite;
+        }
         //Find how whats our speed and move the hit circle every frame
         // Depending on that speed.
         RectTransform rect = GetComponent<RectTransform>();
@@ -57,7 +65,8 @@ public class HitCircle : MonoBehaviour
 
             yield return null;
             }
-    destroyThisHitCircle();
+        //If we exit the loop, it means we passed the range
+        destroyThisHitCircle();
     }
 
     // Remove the circle and send info back
@@ -73,6 +82,32 @@ public class HitCircle : MonoBehaviour
             qteScript.currHitCircle = qteScript.hitCircleQueue.Peek();
         }
         Destroy(gameObject);
+
+        /*
+         *if (!isSpawningQTE && hitCircleQueue.Count == 0)
+            {
+                // QTE is over
+                CombatManager.Instance.doDmgToEnemy(totalDmg * 1.5f);
+                CombatManager.Instance.loseMoney(Random.Range(0f,2f));
+                totalDmg = 0;
+                if(CombatManager.Instance.CurrentUIState != CombatUIState.notInDream)
+                {
+                    CombatManager.Instance.SetUIState(CombatUIState.PlayerTurn);
+                }
+            }
+         */
+        // Check if we are done with the QTE here becuz it can also get auto deleted
+        // From passing the yellow zone.
+        if (!qteScript.isSpawningQTE && qteScript.hitCircleQueue.Count == 0)
+        {
+            CombatManager.Instance.doDmgToEnemy(qteScript.totalDmg * 1.5f);
+            CombatManager.Instance.loseMoney(Random.Range(0f, 2f));
+            qteScript.totalDmg = 0;
+            if (CombatManager.Instance.CurrentUIState != CombatUIState.notInDream)
+            {
+                CombatManager.Instance.SetUIState(CombatUIState.PlayerTurn);
+            }
+        }
         return numToReturn;
     }
 

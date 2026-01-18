@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using TMPro;
 
 // Set up enum so that we know what state we are in during the shift
 // notInDream - disable every combat related UI
@@ -21,9 +22,15 @@ public class CombatManager : MonoBehaviour
     //
     // Handle any relevant combat data
     [SerializeField] private float enemyHP = 50;
-    [SerializeField] private float playerHP = 50;
+    [SerializeField] private float Money = 0;
+    [SerializeField] private float QuotaRequired = 100;
     public QTE_Data QuickTimePresses;
-    public int dmg = 5;
+
+    public TextMeshProUGUI quota;
+    public TextMeshProUGUI moneySoFar;
+
+    public bool isBlocking;
+    //public int dmg = 5;
     #endregion
     
 
@@ -56,6 +63,12 @@ public class CombatManager : MonoBehaviour
 
     public CombatUIState CurrentUIState => currentUIState;
 
+    private void Start()
+    {
+        quota.text = QuotaRequired.ToString();
+        moneySoFar.text = Money.ToString();
+
+    }
     // Public method so that outside scripts can send a signal
     // Changing all scripts attached to this bus
     public void SetUIState(CombatUIState newState)
@@ -65,29 +78,52 @@ public class CombatManager : MonoBehaviour
 
         currentUIState = newState;
         Debug.Log($"Combat UI State changed to: {newState}");
-
+        if(currentUIState == CombatUIState.notInDream)
+        {
+            Debug.Log("Exiting Dream World, resetting enemy HP");
+            enemyHP = 50; // Reset enemy HP when exiting dream world
+        }
         OnUIStateChanged?.Invoke(newState);
     }
     #endregion
 
-    // Temp combat logic & functions
-    // As of now, "Combat UI" uses this to send information back to this script
-    public void doDamage(float dmg, bool isPlayer){
-        if(isPlayer){
-            playerHP-=dmg;
-            Debug.Log("damage: "+ dmg + ",isPlayer: "+ isPlayer + "player took damage just now");
+    //Due to player not inputting anything at all
+    //Need a way of detection when a hit circle goes pass range
+    // And gets deleted
+    public void doDmgToEnemy(float dmg)
+    {
+        if (isBlocking)
+        {
+            return;
         }
-        else{
-            enemyHP-=dmg;
-            Debug.Log("damage: "+ dmg + ",isPlayer: "+ isPlayer + "enemy took damage just now");
+        enemyHP -= dmg;
+        Debug.Log("damage: "+ dmg + "enemy took damage just now");
+        if (enemyHP <= 0)
+        {
+            Debug.Log("Enemy Defeated!");
+            // Exit combat UI
+            SetUIState(CombatUIState.notInDream);
         }
     }
 
-    /*
-    // Public method to know when to start the QTE
-    public void startQTE(List<float> qtEvents){
-        Debug.Log("QTE STARTED");
-    }
-    */
+    public void loseMoney(float amt)
+    {
+        moneySoFar.text = Money.ToString("#.00");
+        // Check if were blocking
+        // Variable is set true when clicking on block button in
+        // UI Combat Buttons cs
+        if (isBlocking){
+            Debug.Log("Blocked Money Loss!");
+            return;
+        }
 
+        // Got lazy to encourage skill, so players just lose
+        // A random amt of money.
+        Money -= amt;
+        if (Money < 0)
+        {
+            Money = 0;
+        }
+        Debug.Log("Lost Money: " + amt);
+    }
 }

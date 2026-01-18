@@ -29,10 +29,12 @@ public class UICombatButtons : MonoBehaviour
     #endregion
 
     public void onAttackPress(){
+        CombatManager.Instance.isBlocking = false;
         CombatManager.Instance.SetUIState(CombatUIState.QTE);
     }
 
     public void onBlockPress(){
+        CombatManager.Instance.isBlocking = true;
         CombatManager.Instance.SetUIState(CombatUIState.QTE);
     }
 
