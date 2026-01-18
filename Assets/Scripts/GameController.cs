@@ -11,10 +11,18 @@ public class GameController : MonoBehaviour
     [SerializeField] private GameObject sauceSpawner;
     [SerializeField] private GameObject cheeseSpawner;
     [SerializeField] private GameObject doughSpawner;
+    [SerializeField] private GameObject PineappleSpawner;
+    [SerializeField] private GameObject MushroomSpawner;
+    [SerializeField] private GameObject BasilSpawner;
+    [SerializeField] private GameObject PepperoniSpawner;
     [SerializeField] private GameObject platePrefab;
     [SerializeField] private GameObject saucePrefab;
     [SerializeField] private GameObject cheesePrefab;
     [SerializeField] private GameObject doughPrefab;
+    [SerializeField] private GameObject pineapplePrefab;
+    [SerializeField] private GameObject mushroomPrefab;
+    [SerializeField] private GameObject basilPrefab;
+    [SerializeField] private GameObject pepperoniPrefab;
     [SerializeField] private GameObject customerPrefab;
     [SerializeField] private GameObject uiPizzaPrefab;
     [SerializeField] private GameObject PizzaListPrefab;
