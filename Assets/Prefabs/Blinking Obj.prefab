@@ -223,7 +223,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BlinkingScript
   fadeImage: {fileID: 7757025247498828460}
-  fadeInTime: 6
+  fadeInTime: 3
   maxFadeHold: 3
   closeTime: 0.2
   closedHold: 0.2

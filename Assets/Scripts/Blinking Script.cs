@@ -34,11 +34,11 @@ public class BlinkingScript : MonoBehaviour
     [SerializeField] private Image fadeImage;
 
     [Header("Timings")]
-    [SerializeField] private float fadeInTime = 5f;
-    [SerializeField] private float maxFadeHold = 2f;
-    [SerializeField] private float closeTime = 1f;
-    [SerializeField] private float closedHold = 0.15f;
-    [SerializeField] private float openTime = 1f;
+    [SerializeField] private float fadeInTime = 3f;
+    [SerializeField] private float maxFadeHold = 3f;
+    [SerializeField] private float closeTime = .2f;
+    [SerializeField] private float closedHold = 0.2f;
+    [SerializeField] private float openTime = .2f;
 
     [Header("Alpha Levels")]
     [SerializeField] private float maxFadeAlpha = 0.6f;

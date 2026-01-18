@@ -6101,7 +6101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 294c2de76c3690b47aa101c60dc8c5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TimeManager
-  totalTime: 240
+  totalTime: 300
   timeRemaining: 0
   winningMsgs:
   - Congrats! You've managed to delay succumbing to the systems of financial predation
