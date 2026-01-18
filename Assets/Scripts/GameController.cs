@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,7 +27,8 @@ public class GameController : MonoBehaviour
     [SerializeField] private GameObject customerPrefab;
     [SerializeField] private GameObject uiPizzaPrefab;
     [SerializeField] private GameObject PizzaListPrefab;
-    [SerializeField] private GameObject HorizontalLayoutParent;
+    [SerializeField] public GameObject HorizontalLayoutParent; // made public so other scripts can access
+    [SerializeField] public GameObject Bubble;
 
     public Transform customerSpawnPoint;
     public Transform bubblePizzaSpawnPoint;
@@ -43,6 +45,17 @@ public class GameController : MonoBehaviour
     public Sprite gen8;
     public Sprite gen9;
     public Sprite gen10;
+    public Sprite gen11;
+    public Sprite gen12;
+    public Sprite gen13;
+    public Sprite gen14;
+    public Sprite gen15;
+    public Sprite gen16;
+    public Sprite gen17;
+    public Sprite gen18;
+    public Sprite gen19;
+    public Sprite gen20;
+    public Sprite gen21;
 
     public Sprite pizza1;
     public Sprite pizza2;
@@ -59,17 +72,19 @@ public class GameController : MonoBehaviour
     public float plateTimer = 0f;
     public float plateCookTime = 5f; // Time in seconds for cooking
     
-    private BoxCollider2D plateCollider = null;
     private GameObject customer = null;
     private SpriteRenderer customerSpriteRenderer = null;
     private float spriteChangeTimer = 0f;
-    private float spriteChangeInterval = 60f; // Change sprite xseconds
+    private float spriteChangeInterval = 20f; // Change sprite xseconds
 
     // UI pizza (bubble) instances & timers
     private GameObject uiPizza = null;
     private SpriteRenderer uiPizzaSpriteRenderer = null;
     private Image uiPizzaImage = null;
     private float uiSpriteChangeTimer = 0f;
+
+    // Track the Plate currently in the oven so we can mark it cooked when timer ends
+    public Plate currentCookingPlate = null;
     
     void Start()
     {
@@ -77,8 +92,10 @@ public class GameController : MonoBehaviour
         sauceSpawner = GameObject.FindGameObjectWithTag("SauceSpawner");
         cheeseSpawner = GameObject.FindGameObjectWithTag("CheeseSpawner");
         doughSpawner = GameObject.FindGameObjectWithTag("DoughSpawner");
-        
-        //plateCollider = GameObject.FindGameObjectWithTag("Plate").GetComponent<BoxCollider2D>();
+        PineappleSpawner = GameObject.FindGameObjectWithTag("PineappleSpawner");
+        MushroomSpawner = GameObject.FindGameObjectWithTag("MushroomSpawner");
+        BasilSpawner = GameObject.FindGameObjectWithTag("BasilSpawner");
+        PepperoniSpawner = GameObject.FindGameObjectWithTag("PepperoniSpawner");
 
         // Spawn customer prefab with random sprite gen1-10 at customer spawner position
         if (customerPrefab != null && customerSpawnPoint != null)
@@ -113,9 +130,16 @@ public class GameController : MonoBehaviour
         HandleIngredientSpawning(doughSpawner, doughPrefab);
         HandleIngredientSpawning(sauceSpawner, saucePrefab);
         HandleIngredientSpawning(cheeseSpawner, cheesePrefab);
+
+        // toppings: same instantiation logic as other ingredients
+        HandleIngredientSpawning(PineappleSpawner, pineapplePrefab);
+        HandleIngredientSpawning(MushroomSpawner, mushroomPrefab);
+        HandleIngredientSpawning(BasilSpawner, basilPrefab);
+        HandleIngredientSpawning(PepperoniSpawner, pepperoniPrefab);
+
         HandlePlateSpawning(plateSpawner, platePrefab);
         
-        // Update customer sprite every 5 seconds
+        // Update customer sprite on its timer
         if (customerSpriteRenderer != null)
         {
             spriteChangeTimer -= Time.deltaTime;
@@ -126,7 +150,7 @@ public class GameController : MonoBehaviour
             }
         }
 
-        // Update UI pizza sprite every 5 seconds (similar behavior to customer)
+        // Update UI pizza sprite on its timer
         if (uiPizzaSpriteRenderer != null || uiPizzaImage != null)
         {
             uiSpriteChangeTimer -= Time.deltaTime;
@@ -155,6 +179,13 @@ public class GameController : MonoBehaviour
                 isOvenCooking = false;
                 plateTimer = 0f;
                 
+                // Mark the plate in the oven as cooked
+                if (currentCookingPlate != null)
+                {
+                    currentCookingPlate.SetCooked(true);
+                    currentCookingPlate = null;
+                }
+                
                 // Update progress bar to full
                 if (plateProgress1 != null)
                 {
@@ -169,13 +200,32 @@ public class GameController : MonoBehaviour
         if (customerSpriteRenderer == null)
             return;
         
-        Sprite[] customerSprites = { gen1, gen2, gen3, gen4, gen5, gen6, gen7, gen8, gen9, gen10 };
+        // Ensure customer (and bubble container if assigned) becomes visible when we change sprite on the timer
+        customerSpriteRenderer.enabled = true;
+        if (Bubble != null)
+            Bubble.SetActive(true);
+
+        // expanded range: gen1 .. gen21
+        Sprite[] customerSprites = {
+            gen1, gen2, gen3, gen4, gen5, gen6, gen7, gen8, gen9, gen10,
+            gen11, gen12, gen13, gen14, gen15, gen16, gen17, gen18, gen19, gen20, gen21
+        };
+
         int randomIndex = Random.Range(0, customerSprites.Length);
         customerSpriteRenderer.sprite = customerSprites[randomIndex];
     }
 
     private void ChangeUIPizzaSprite()
     {
+        // Make UI pizza visible again when we change sprite on the timer (and ensure bubble active)
+        if (uiPizzaSpriteRenderer != null)
+            uiPizzaSpriteRenderer.enabled = true;
+        else if (uiPizzaImage != null)
+            uiPizzaImage.enabled = true;
+
+        if (Bubble != null)
+            Bubble.SetActive(true);
+
         Sprite[] pizzaSprites = { pizza1, pizza2, pizza3, pizza4, pizza5, pizza6, pizza7, pizza8 };
         int randomIndex = Random.Range(0, pizzaSprites.Length);
         Sprite chosen = pizzaSprites[randomIndex];
@@ -259,6 +309,107 @@ public class GameController : MonoBehaviour
         {
             Debug.LogWarning("PizzaListPrefab does not contain an Image component to assign the sprite to.");
         }
+    }
+
+    // Given the plate's ingredients, return the matching pizza sprite if any (per mapping provided)
+    public Sprite GetMatchingPizzaSprite(Plate plate)
+    {
+        if (plate == null)
+            return null;
+
+        var ingredients = plate.GetIngredients(); // includes dough, sauce, cheese, toppings
+        // require cheese to be present for any valid pizza
+        bool hasCheese = ingredients.Contains("cheese");
+
+        if (!hasCheese)
+            return null;
+
+        bool hasPineapple = ingredients.Contains("pineapple");
+        bool hasMushroom = ingredients.Contains("mushroom");
+        bool hasBasil = ingredients.Contains("basil");
+        bool hasPepperoni = ingredients.Contains("pepperoni");
+
+        // pizza1 - cheese no toppings
+        if (!hasPineapple && !hasMushroom && !hasBasil && !hasPepperoni)
+            return pizza1;
+
+        // pizza2 - pepperoni
+        if (hasPepperoni && !hasMushroom && !hasBasil && !hasPineapple)
+            return pizza2;
+
+        // pizza3 - mushroom
+        if (hasMushroom && !hasBasil && !hasPineapple && !hasPepperoni)
+            return pizza3;
+
+        // pizza4 - mushroom and basil
+        if (hasMushroom && hasBasil && !hasPineapple && !hasPepperoni)
+            return pizza4;
+
+        // pizza5 - mushroom basil pineapple
+        if (hasMushroom && hasBasil && hasPineapple && !hasPepperoni)
+            return pizza5;
+
+        // pizza6 - pineapple
+        if (hasPineapple && !hasMushroom && !hasBasil && !hasPepperoni)
+            return pizza6;
+
+        // pizza7 - basil and pineapple
+        if (hasBasil && hasPineapple && !hasMushroom && !hasPepperoni)
+            return pizza7;
+
+        // pizza8 - pepperoni basil pineapple
+        if (hasPepperoni && hasBasil && hasPineapple && !hasMushroom)
+            return pizza8;
+
+        return null;
+    }
+
+    // Removes the first child under HorizontalLayoutParent whose Image.sprite == spriteToRemove.
+    // Returns true if removed.
+    public bool RemovePizzaListEntryBySprite(Sprite spriteToRemove)
+    {
+        if (spriteToRemove == null)
+            return false;
+
+        if (HorizontalLayoutParent == null)
+        {
+            Debug.LogWarning("HorizontalLayoutParent is not assigned on GameController");
+            return false;
+        }
+
+        foreach (Transform child in HorizontalLayoutParent.transform)
+        {
+            if (child == null)
+                continue;
+
+            Image img = child.GetComponent<Image>();
+            if (img == null)
+                img = child.GetComponentInChildren<Image>();
+
+            if (img != null && img.sprite == spriteToRemove)
+            {
+                Destroy(child.gameObject);
+
+                // Do NOT reset the customer/ui timers here so existing countdowns continue uninterrupted.
+                // Make customer invisible now; the next timer cycle (ChangeCustomerSprite) will re-enable and set a new sprite.
+                if (customerSpriteRenderer != null)
+                    customerSpriteRenderer.enabled = false;
+
+                // Make the UI pizza bubble invisible now; ChangeUIPizzaSprite() will re-enable on the next timer cycle.
+                if (uiPizzaSpriteRenderer != null)
+                    uiPizzaSpriteRenderer.enabled = false;
+                if (uiPizzaImage != null)
+                    uiPizzaImage.enabled = false;
+
+                // Also hide the bubble container if assigned (so both customer and bubble are invisible)
+                if (Bubble != null)
+                    Bubble.SetActive(false);
+
+                return true;
+            }
+        }
+
+        return false;
     }
     
     private void HandleIngredientSpawning(GameObject spawner, GameObject prefab)
