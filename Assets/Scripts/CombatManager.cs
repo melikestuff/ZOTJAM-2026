@@ -24,7 +24,7 @@ public class CombatManager : MonoBehaviour
     [SerializeField] private float enemyHP = 50;
     public float Money = 0;
     public float QuotaRequired = 100;
-    public QTE_Data QuickTimePresses;
+    public List<QTE_Data> QuickTimePresses;
 
     public TextMeshProUGUI quota;
     public TextMeshProUGUI moneySoFar;
@@ -67,7 +67,6 @@ public class CombatManager : MonoBehaviour
     {
         quota.text = QuotaRequired.ToString();
         moneySoFar.text = Money.ToString();
-
     }
     // Public method so that outside scripts can send a signal
     // Changing all scripts attached to this bus
@@ -87,6 +86,10 @@ public class CombatManager : MonoBehaviour
     }
     #endregion
 
+    public QTE_Data getAQTE()
+    {
+        return QuickTimePresses[UnityEngine.Random.Range(0, QuickTimePresses.Count)];
+    }
     //Due to player not inputting anything at all
     //Need a way of detection when a hit circle goes pass range
     // And gets deleted
