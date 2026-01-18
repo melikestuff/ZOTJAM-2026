@@ -28,7 +28,10 @@ public class RandomEnemySprite : MonoBehaviour
 
     private void HandleUIStateChanged(CombatUIState newState)
     {
-        SetRandomSprite();
+        if(nightmareScene.activeSelf == false)
+        {
+            SetRandomSprite();
+        }
         if (newState != visibleExceptState)
         {
             QTE_UI.SetActive(true);
