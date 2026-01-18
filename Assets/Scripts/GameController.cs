@@ -15,7 +15,11 @@ public class GameController : MonoBehaviour
     [SerializeField] private GameObject saucePrefab;
     [SerializeField] private GameObject cheesePrefab;
     [SerializeField] private GameObject doughPrefab;
+    [SerializeField] private GameObject customerPrefab;
+    public Transform customerSpawnPoint;
 
+    //customer sprites
+    //general male sprites
     public Sprite gen1;
     public Sprite gen2;
     public Sprite gen3;
@@ -34,6 +38,10 @@ public class GameController : MonoBehaviour
     public float plateCookTime = 5f; // Time in seconds for cooking
     
     private BoxCollider2D plateCollider = null;
+    private GameObject customer = null;
+    private SpriteRenderer customerSpriteRenderer = null;
+    private float spriteChangeTimer = 0f;
+    private float spriteChangeInterval = 5f; // Change sprite every 5 seconds
     
     void Start()
     {
@@ -42,10 +50,31 @@ public class GameController : MonoBehaviour
         cheeseSpawner = GameObject.FindGameObjectWithTag("CheeseSpawner");
         doughSpawner = GameObject.FindGameObjectWithTag("DoughSpawner");
         
-        plateCollider = GameObject.FindGameObjectWithTag("Plate").GetComponent<BoxCollider2D>();
+        //plateCollider = GameObject.FindGameObjectWithTag("Plate").GetComponent<BoxCollider2D>();
 
-        // spawn object with sprite gen1 at plate spawner position
-
+        // Spawn customer prefab with random sprite gen1-10 at customer spawner position
+        if (customerPrefab != null && customerSpawnPoint != null)
+        {
+            customer = Instantiate(customerPrefab, customerSpawnPoint.position, Quaternion.identity);
+            customerSpriteRenderer = customer.GetComponent<SpriteRenderer>();
+            
+            if (customerSpriteRenderer != null)
+            {
+                ChangeCustomerSprite();
+                spriteChangeTimer = spriteChangeInterval;
+            }
+            else
+            {
+                Debug.LogWarning("Customer prefab does not have a SpriteRenderer component");
+            }
+        }
+        else
+        {
+            if (customerPrefab == null)
+                Debug.LogWarning("Customer prefab is not assigned");
+            if (customerSpawnPoint == null)
+                Debug.LogWarning("Customer spawn point is not assigned");
+        }
     }
 
     void Update()
@@ -54,6 +83,17 @@ public class GameController : MonoBehaviour
         HandleIngredientSpawning(sauceSpawner, saucePrefab);
         HandleIngredientSpawning(cheeseSpawner, cheesePrefab);
         HandlePlateSpawning(plateSpawner, platePrefab);
+        
+        // Update customer sprite every 5 seconds
+        if (customerSpriteRenderer != null)
+        {
+            spriteChangeTimer -= Time.deltaTime;
+            if (spriteChangeTimer <= 0f)
+            {
+                ChangeCustomerSprite();
+                spriteChangeTimer = spriteChangeInterval;
+            }
+        }
         
         // Update plate timer
         if (isOvenCooking)
@@ -80,6 +120,16 @@ public class GameController : MonoBehaviour
                 }
             }
         }
+    }
+    
+    private void ChangeCustomerSprite()
+    {
+        if (customerSpriteRenderer == null)
+            return;
+        
+        Sprite[] customerSprites = { gen1, gen2, gen3, gen4, gen5, gen6, gen7, gen8, gen9, gen10 };
+        int randomIndex = Random.Range(0, customerSprites.Length);
+        customerSpriteRenderer.sprite = customerSprites[randomIndex];
     }
     
     private void HandleIngredientSpawning(GameObject spawner, GameObject prefab)
