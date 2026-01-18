@@ -27,6 +27,8 @@ public class GameController : MonoBehaviour
     [SerializeField] private GameObject uiPizzaPrefab;
     [SerializeField] private GameObject PizzaListPrefab;
     [SerializeField] private GameObject HorizontalLayoutParent;
+    [SerializeField] private GameObject DropOffZone;
+    [SerializeField] private GameObject Trash;
 
     public Transform customerSpawnPoint;
     public Transform bubblePizzaSpawnPoint;
@@ -77,7 +79,11 @@ public class GameController : MonoBehaviour
         sauceSpawner = GameObject.FindGameObjectWithTag("SauceSpawner");
         cheeseSpawner = GameObject.FindGameObjectWithTag("CheeseSpawner");
         doughSpawner = GameObject.FindGameObjectWithTag("DoughSpawner");
-        
+        PineappleSpawner = GameObject.FindGameObjectWithTag("PineappleSpawner");
+        MushroomSpawner = GameObject.FindGameObjectWithTag("MushroomSpawner");
+        BasilSpawner = GameObject.FindGameObjectWithTag("BasilSpawner");
+        PepperoniSpawner = GameObject.FindGameObjectWithTag("PepperoniSpawner");
+
         //plateCollider = GameObject.FindGameObjectWithTag("Plate").GetComponent<BoxCollider2D>();
 
         // Spawn customer prefab with random sprite gen1-10 at customer spawner position
@@ -113,6 +119,13 @@ public class GameController : MonoBehaviour
         HandleIngredientSpawning(doughSpawner, doughPrefab);
         HandleIngredientSpawning(sauceSpawner, saucePrefab);
         HandleIngredientSpawning(cheeseSpawner, cheesePrefab);
+
+        // toppings: same instantiation logic as other ingredients
+        HandleIngredientSpawning(PineappleSpawner, pineapplePrefab);
+        HandleIngredientSpawning(MushroomSpawner, mushroomPrefab);
+        HandleIngredientSpawning(BasilSpawner, basilPrefab);
+        HandleIngredientSpawning(PepperoniSpawner, pepperoniPrefab);
+
         HandlePlateSpawning(plateSpawner, platePrefab);
         
         // Update customer sprite every 5 seconds

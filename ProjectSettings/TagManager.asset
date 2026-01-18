@@ -16,6 +16,8 @@ TagManager:
   - MushroomSpawner
   - BasilSpawner
   - PepperoniSpawner
+  - DropOff
+  - Trash
   layers:
   - Default
   - TransparentFX
