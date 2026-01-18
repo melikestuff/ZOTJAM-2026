@@ -5,8 +5,10 @@ using UnityEditor;
 #endif
 using UnityEngine;
 
+
 public class QTEhandler : MonoBehaviour
 {
+    
     #region Allow For Easy Inspector editing
 
     // References to the Good and Bad ranges
@@ -73,8 +75,8 @@ public class QTEhandler : MonoBehaviour
     //[SerializeField] 
     //private GameObject parentPoolObj;
 
-    [SerializeField] 
-    private List<float> hitCircles = new List<float>();
+    //[SerializeField] 
+    //private List<float> hitCircles = new List<float>();
 
     // Since Hit circles spawn, the earlist one is First, 
     // So it can follow a FIFO
@@ -95,13 +97,14 @@ public class QTEhandler : MonoBehaviour
 
     // This function is called when QTE happens
     // Called by Combat Manager after recieving the call from UI Combat Buttons
-    public void startQTE(List<float> hitCirclesToSpawn){
-        StartCoroutine(SpawnHitCircles(hitCirclesToSpawn));
+    public void startQTE(QTE_Data data)
+    {
+        StartCoroutine(SpawnHitCircles(data.hitCircles));
     }
 
     // Since I can't run a update method here
     // Using a coroutine to run thru all elements in the given list
-    private IEnumerator SpawnHitCircles(List<float> hitCirclesToSpawn)
+    private IEnumerator SpawnHitCircles(List<HitCircleData> hitCirclesToSpawn)
     {
     float timeSoFar = 0f;
     int index = 0;
@@ -110,11 +113,14 @@ public class QTEhandler : MonoBehaviour
     {
         timeSoFar += Time.deltaTime;
 
-        if (timeSoFar >= hitCirclesToSpawn[index])
+        if (timeSoFar >= hitCirclesToSpawn[index].spawnTime)
             {
             // Spawn a new hit circle and add it to the queue
             GameObject circle = Instantiate(hitCirclePrefab, circleSpawnPoint);
             circle.GetComponent<HitCircle>().getQTE_Reference(this);
+            circle.GetComponent<HitCircle>().isShadow = hitCirclesToSpawn[index].color; //== HitCircleColor.Blue;
+
+
             //circle.Transform.x = 0;
 
             //Debug.Log("I SPAWNED A HIT CIRCLE");
@@ -148,11 +154,11 @@ public class QTEhandler : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.X))
             {
                 HitCircle theCircle = currHitCircle.GetComponent<HitCircle>();
-                bool color = theCircle.isShadow;
+                HitCircleColor color = theCircle.isShadow;
                 float posX = theCircle.destroyThisHitCircle();
 
                 //Check if color is even correct
-                if (!color)
+                if (color == HitCircleColor.normal)
                 {
                     //Check if hit circle is in the goodRange
                     //Check if its in green range 

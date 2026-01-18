@@ -22,7 +22,7 @@ public class CombatManager : MonoBehaviour
     // Handle any relevant combat data
     [SerializeField] private float enemyHP = 50;
     [SerializeField] private float playerHP = 50;
-    public List<float> QuickTimePresses = new List<float>();
+    public QTE_Data QuickTimePresses;
     public int dmg = 5;
     #endregion
     
