@@ -5,21 +5,9 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
-  - enabled: 1
-    path: Assets/Scenes/Title Screen.unity
-    guid: 64dfe1d6712e331439a905e6e338def0
-  - enabled: 1
-    path: Assets/Scenes/Cooking Test.unity
-    guid: 0a43b6001448d2f4b839fab9d3b42473
-  - enabled: 1
-    path: Assets/Scenes/Combat Test.unity
-    guid: 189d0015e2c57784f9676fbca2b3fd09
-  - enabled: 1
-    path: Assets/Scenes/Quota Screen.unity
-    guid: d45287a0702ffec4f8b13db8b7f4fe2e
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
