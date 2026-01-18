@@ -106,6 +106,12 @@ public class CombatManager : MonoBehaviour
         }
     }
 
+    public void gainMoney (float amt)
+    {
+        Money += amt;
+        moneySoFar.text = Money.ToString("#.00");
+        Debug.Log("Gained Money: " + amt);
+    }
     public void loseMoney(float amt)
     {
         moneySoFar.text = Money.ToString("#.00");

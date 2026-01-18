@@ -1,16 +1,50 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class RandomEnemySprite : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private List<Sprite> sprites;
+
+    #region Event Listener
+    [SerializeField] 
+    private CombatUIState visibleExceptState = CombatUIState.notInDream;
+    [SerializeField]
+    private GameObject QTE_UI;
+    private void OnEnable()
     {
-        
+        CombatManager.OnUIStateChanged += HandleUIStateChanged;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnDisable()
     {
-        
+        CombatManager.OnUIStateChanged -= HandleUIStateChanged;
     }
+
+    private void HandleUIStateChanged(CombatUIState newState)
+    {
+        SetRandomSprite();
+        if (newState != visibleExceptState)
+        {
+            QTE_UI.SetActive(true);
+        }
+        else{
+            QTE_UI.SetActive(false);
+        }
+    }
+    #endregion
+    void Start()
+    {
+        SetRandomSprite();
+    }
+
+    void SetRandomSprite()
+    {
+        if (sprites == null || sprites.Count == 0)
+            return;
+
+        int index = Random.Range(0, sprites.Count); // max is exclusive
+        spriteRenderer.sprite = sprites[index];
+    }
+
 }
