@@ -6,7 +6,7 @@ public class HitCircle : MonoBehaviour
 {
 
     [SerializeField]
-    public bool isShadow;
+    public HitCircleColor isShadow;
     Coroutine qteCoroutine;
 
     QTEhandler qteScript;
