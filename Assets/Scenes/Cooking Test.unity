@@ -6644,7 +6644,8 @@ MonoBehaviour:
   cameraFollowSpeed: 6
   maxCameraDistanceVertical: 0.4
   maxCameraDistanceVerticalDown: 6
-  deadzoneRadius: 8.5
+  deadzoneRadius: 9
+  cameraReturnSpeed: 25
   isDragging: 0
 --- !u!1 &8324169744772603804
 GameObject:
