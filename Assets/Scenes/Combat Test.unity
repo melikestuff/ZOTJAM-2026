@@ -1021,7 +1021,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1136145926
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1309,7 +1309,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -559, y: -350}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 80, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1405681787
@@ -1902,6 +1902,8 @@ MonoBehaviour:
   - 3
   circleSpawnPoint: {fileID: 1405681786}
   hitCirclePrefab: {fileID: 1234154427690463745, guid: 1a3becd5ff1146d42a077d1fb62205ed, type: 3}
+  currHitCircle: {fileID: 0}
+  timeForQTE: 1.2
 --- !u!1 &1986351148
 GameObject:
   m_ObjectHideFlags: 0
@@ -2128,7 +2130,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2128832946
 RectTransform:
   m_ObjectHideFlags: 0

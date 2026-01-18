@@ -11,11 +11,11 @@ public class QTEhandler : MonoBehaviour
 
     // References to the Good and Bad ranges
     // And also store their widths for usage later
-    [SerializeField] private RectTransform mediumRange;
-    [SerializeField] private float mediumRangeWidth;
+    public RectTransform mediumRange;
+    public float mediumRangeWidth;
 
-    [SerializeField] private RectTransform goodRange;
-    [SerializeField] private float goodRangeWidth;
+    public RectTransform goodRange;
+    public float goodRangeWidth;
 
     private void OnValidate()
     {
@@ -88,6 +88,13 @@ public class QTEhandler : MonoBehaviour
     [SerializeField]
     private GameObject hitCirclePrefab;
 
+    // This is just so that we can see which one is left most in 
+    // Inspector
+    [SerializeField]
+    private GameObject currHitCircle;
+
+    public float timeForQTE;
+
     // This function is called when QTE happens
     // Called by Combat Manager after recieving the call from UI Combat Buttons
     public void startQTE(List<float> hitCirclesToSpawn){
@@ -109,8 +116,20 @@ public class QTEhandler : MonoBehaviour
             {
             // Spawn a new hit circle and add it to the queue
             GameObject circle = Instantiate(hitCirclePrefab, circleSpawnPoint);
+            circle.GetComponent<HitCircle>().getQTE_Reference(this);
+            //circle.Transform.x = 0;
+
             Debug.Log("I SPAWNED A HIT CIRCLE");
+            // Do some queue magic, so we know
+            // Which one is always the left most one
+            // Since they all move at the same speed
+
             hitCircleQueue.Enqueue(circle);
+            currHitCircle = hitCircleQueue.Peek(); 
+            //Debug.Log(goodRange.anchoredPosition.x);
+            //Debug.Log(goodRangeWidth);
+            
+            circle.GetComponent<HitCircle>().spawnHitCircle();
             index++;
             }
 
