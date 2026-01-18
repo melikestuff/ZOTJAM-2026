@@ -6,6 +6,7 @@ public class Plate : MonoBehaviour
     [SerializeField] private BoxCollider2D cursor;
     [SerializeField] private BoxCollider2D oven;
     [SerializeField] private bool isInOven = false;
+    [SerializeField] private Transform platePos;
     public Cursor cursorScript;
     public GameController gc;
 
@@ -19,6 +20,7 @@ public class Plate : MonoBehaviour
         oven = GameObject.FindGameObjectWithTag("Oven").GetComponent<BoxCollider2D>();
         cursorScript = GameObject.FindGameObjectWithTag("Cursor").GetComponent<Cursor>();
         gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
+        platePos = GameObject.FindGameObjectWithTag("PlatePos")?.transform;
 
         // Log initial ingredient state
         LogIngredients();
@@ -118,7 +120,7 @@ public class Plate : MonoBehaviour
                     Debug.Log($"{name} is already cooked and cannot be placed back into the oven.");
                     // snap back to start so it doesn't remain overlapping oven
                     if (!isInOven)
-                        transform.position = new Vector3(3.3f, -3.5f, 0);
+                        ResetToPlatePosition();
                 }
                 else if (!gc.isOvenCooking)
                 {
@@ -136,7 +138,7 @@ public class Plate : MonoBehaviour
                 // Not in oven, reset position
                 if (!isInOven)
                 {
-                    transform.position = new Vector3(3.3f, -3.5f, 0);
+                    ResetToPlatePosition();
                 }
             }
 
@@ -222,9 +224,23 @@ public class Plate : MonoBehaviour
                 if (ing != null && ing.IngredientType == "dough")
                 {
                     // 0.95 => 5% darker (very slight)
-                    ing.ApplyCookedTint(0.7f);
+                    ing.ApplyCookedTint(0.85f);
                 }
             }
+        }
+    }
+
+    // Reset plate position to the serialized platePos transform if assigned,
+    // otherwise fall back to the previous hardcoded position.
+    private void ResetToPlatePosition()
+    {
+        if (platePos != null)
+        {
+            transform.position = new Vector3(platePos.position.x, platePos.position.y, transform.position.z);
+        }
+        else
+        {
+            transform.position = new Vector3(3.3f, -3.5f, 0);
         }
     }
 }

@@ -18,6 +18,8 @@ TagManager:
   - PepperoniSpawner
   - DropOff
   - Trash
+  - playerPos
+  - PlatePos
   layers:
   - Default
   - TransparentFX
