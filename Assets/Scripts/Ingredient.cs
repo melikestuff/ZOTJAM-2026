@@ -8,7 +8,7 @@ public class Ingredient : MonoBehaviour
     [SerializeField] private BoxCollider2D plate; // kept for compatibility but not relied on for drop detection
     [SerializeField] private string ingredientType = "dough"; // "dough", "sauce", "cheese", "pineapple", "mushroom", "basil", "pepperoni"
     [SerializeField] public bool isPlaced = false;
-    
+
     public Cursor cursorScript;
     public GameController gc;
 
@@ -59,7 +59,7 @@ public class Ingredient : MonoBehaviour
             if (targetPlate != null)
             {
                 // Check if prerequisites are met
-                if (CanPlace())
+                if (CanPlace(targetPlate))
                 {
                     // If an ingredient of same type already exists on plate, destroy this duplicate (do not add)
                     if (IsDuplicateOnPlate(targetPlate))
@@ -83,8 +83,6 @@ public class Ingredient : MonoBehaviour
                     {
                         plateScript.AddIngredient(ingredientType);
                     }
-
-                    UpdateGameController();
                 }
             }
 
@@ -112,23 +110,30 @@ public class Ingredient : MonoBehaviour
         return null;
     }
 
-    private bool CanPlace()
+    private bool CanPlace(Transform targetPlateTransform)
     {
+        if (targetPlateTransform == null)
+            return false;
+
+        var targetPlate = targetPlateTransform.GetComponent<Plate>();
+        if (targetPlate == null)
+            return false;
+
         switch (ingredientType.ToLower())
         {
             case "dough":
                 return true; // Dough can always be placed
             case "sauce":
-                return gc.isDoughPlaced; // Sauce can only be placed if dough is placed
+                return targetPlate.IsDoughPlaced; // Sauce can only be placed if THIS plate has dough
             case "cheese":
-                return gc.isSauceAdded; // Cheese can only be placed if sauce is placed
+                return targetPlate.IsSauceAdded; // Cheese can only be placed if THIS plate has sauce
 
-            // toppings: only placeable after cheese is added
+            // toppings: only placeable after cheese is added to THIS plate
             case "pineapple":
             case "mushroom":
             case "basil":
             case "pepperoni":
-                return gc.isCheeseAdded;
+                return targetPlate.IsCheeseAdded;
 
             default:
                 return false;
@@ -166,24 +171,8 @@ public class Ingredient : MonoBehaviour
         return false;
     }
 
-    private void UpdateGameController()
-    {
-        switch (ingredientType.ToLower())
-        {
-            case "dough":
-                gc.isDoughPlaced = true;
-                break;
-            case "sauce":
-                gc.isSauceAdded = true;
-                break;
-            case "cheese":
-                gc.isCheeseAdded = true;
-                break;
-        }
-    }
-
     // Apply a slight dark tint to this ingredient's sprite to indicate cooking.
-    // multiplier: values <1 darken, 1 leaves unchanged (default 0.95 = 5% darker)
+    // multiplier: values <1 darken, 1 leaves unchanged (default 0.85 = 15% darker)
     public void ApplyCookedTint(float multiplier = 0.85f)
     {
         var sr = GetComponent<SpriteRenderer>();
