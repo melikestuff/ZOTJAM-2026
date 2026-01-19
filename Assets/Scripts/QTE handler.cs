@@ -253,7 +253,7 @@ public class QTEhandler : MonoBehaviour
             {
                 // QTE is over
                 CombatManager.Instance.doDmgToEnemy(totalDmg * 1.5f);
-                CombatManager.Instance.loseMoney(Random.Range(0f,2f));
+                CombatManager.Instance.loseMoney(Random.Range(0f,.5f));
                 totalDmg = 0;
                 if(CombatManager.Instance.CurrentUIState != CombatUIState.notInDream)
                 {
