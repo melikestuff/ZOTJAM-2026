@@ -26,13 +26,6 @@ public class CutsceneController : MonoBehaviour
         IntroCutsceneCanvas.SetActive(true);
         dialogueLines[10] = "The boss says I need to bring in " + DataController.quotaNumber.ToString() + " dollars today or else I'm fired...";
         
-        if (CombatManager.Instance != null)
-        {
-            if (CombatManager.Instance.passQuota())
-            {
-                slideNumber = 10;
-            }
-        }
         
     }
 
@@ -56,15 +49,6 @@ public class CutsceneController : MonoBehaviour
     }
     public void ClickedStart()
     {
-        if (CombatManager.Instance != null)
-        {
-            if (CombatManager.Instance.passQuota())
-            {
-                DataController.dayNumber += 1;
-                DataController.quotaNumber = 40 + DataController.dayNumber * 10;
-            }
-        }
-
         StartCutscene();
     }
 
