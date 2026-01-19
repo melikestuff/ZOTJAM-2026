@@ -76,7 +76,7 @@ public class GameController : MonoBehaviour
     private GameObject customer = null;
     private SpriteRenderer customerSpriteRenderer = null;
     private float spriteChangeTimer = 0f;
-    private float spriteChangeInterval = 13f; // Change sprite xseconds
+    private float spriteChangeInterval = 15f; // Change sprite xseconds
 
     // UI pizza (bubble) instances & timers
     private GameObject uiPizza = null;
